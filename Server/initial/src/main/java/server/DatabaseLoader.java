@@ -171,9 +171,7 @@ public class DatabaseLoader {
 		    
 		    String salt = Base64.getEncoder().encodeToString(bytes);
 		    String passhash = passwordHash(password, salt);
-		    
-		    
-		    
+		     
 			stmt.setString(1, name);
 			stmt.setString(2, emailhash);
 			stmt.setString(3, passhash);
@@ -231,7 +229,7 @@ public class DatabaseLoader {
 			String sql2 = "INSERT INTO Login(email, login_date)" + "VALUES(?, ?);";
 			PreparedStatement stmt2 = (PreparedStatement) connection.prepareStatement(sql2);
 
-			stmt2.setString(1,email);
+			stmt2.setString(1,emailhash);
 			stmt2.setString(2,LocalDateTime.now().toString());
 		}	
 		
