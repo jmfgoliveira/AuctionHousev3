@@ -2,6 +2,6 @@ server/Application.class
 server/User.class
 server/Server.class
 server/DatabaseLoader.class
-server/Auction.class
 server/Register.class
+server/Auction.class
 server/Product.class
