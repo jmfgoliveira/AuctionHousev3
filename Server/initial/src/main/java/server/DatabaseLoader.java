@@ -143,6 +143,12 @@ public class DatabaseLoader {
 
 	public void insertUser(String name, String email, String password) throws SQLException 
 	{
+
+		if(name == null || email == null || password == null || !email.contains("@")) {
+			System.out.println("Input invalido");
+			return;
+		}
+
 			String sql = "INSERT INTO User(name, email, password, salt) "
 				+ "VALUES(?, ?, ?, ?);";
 			PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
@@ -208,6 +214,10 @@ public class DatabaseLoader {
 
 	public void insertProduct(int product_id, int owner_id, String product_name, int product_price, int quantity, String description) throws SQLException{
 
+		if(product_name == null || product_price == null || quantity == null || description == null) {
+			System.out.println("Input invalido");
+			return;
+		}
 
 		String sql = "INSERT INTO Product(name, price, quantity, owner_id, description) " + "VALUES( ?, ?, ?, ?, ?);";
 
