@@ -20,7 +20,7 @@
         var password = document.getElementById('inputPassword').value;
         var url = "http://localhost:8080/login"
         var newurl = url.concat("?email=").concat(email).concat("&password=").concat(password)
-        $.get(newurl,
+        $.post(newurl,
           function(data){
             alert("Data Loaded: " + data);
           });
@@ -58,19 +58,36 @@
         <h2 class="form-login-heading">Please sign in</h2>
 		
         <label for="inputEmail" class="sr-only">Email address</label>
-        <input type="email" name="email" class="form-control" placeholder="Email address" required autofocus>
+        <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required autofocus>
 		
         <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" name="password" class="form-control" placeholder="Password" required>
+        <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
 		
-         <button class="btn btn-lg btn-primary btn-block" onclick="javascript:getTasks();">Sign in</button>
+
 		</form>
-		<div class="center">
-			<a class="center" href="register.html"> Don't have an account? Register here. </a>
-		</div>
+		
     </div> 
-	
-	
+    <style>
+          .button {
+              background-color: #1E90FF; /* Blue */
+              border: none;
+              color: white;
+              padding: 16px 32px;
+              text-align: center;
+              text-decoration: none;
+              display: inline-block;
+              font-size: 16px;
+              margin: 0px 2px;
+              cursor: pointer;
+          }
+
+          .button4 {border-radius: 12px;}
+          .button4 {width: 30%;}
+        </style>
+    <center><button class="button button4" onclick="javascript:getTasks();">Sign in</button></center>
+    <div class="center">
+      <a class="center" href="register.html"> Don't have an account? Register here. </a>
+    </div>
   </body>
  
 </html>
