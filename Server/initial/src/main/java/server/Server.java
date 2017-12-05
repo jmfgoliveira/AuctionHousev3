@@ -12,9 +12,11 @@ public class Server {
     private final AtomicLong counter = new AtomicLong();
 
     @RequestMapping("/register")
-    public String register(@RequestParam(value="email", defaultValue="World") String email) {
+    public String register(@RequestParam("email") String email,
+            @RequestParam("password") String password) {
     	System.out.println("email: " + email);
-        return email;
+    	System.out.println("password: " + password);
+        return email + password;
     }
     @RequestMapping("/login")
     public Register login(@RequestParam(value="name", defaultValue="World") String name) {

@@ -18,7 +18,7 @@
       	var email = document.getElementById('inputEmail').value;
       	var password = document.getElementById('inputPassword').value;
       	var url = "http://localhost:8080/register"
-      	var newurl = url.concat("?email=").concat(email)
+      	var newurl = url.concat("?email=").concat(email).concat("&password=").concat(password)
         $.get(newurl,
           function(data){
             alert("Data Loaded: " + data);
