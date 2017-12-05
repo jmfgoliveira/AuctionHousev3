@@ -144,44 +144,48 @@ public class DatabaseLoader {
 	
 	private String passwordHash(String password, String salt) 
 	{
-		
 		String sha256hex = DigestUtils.sha256Hex(password + salt);
 		return sha256hex;
 	}
+
 	
 	
 	public boolean insertUser(String name, String email, String password) throws SQLException 
 	{
-			String emailhash = DigestUtils.sha256Hex(email);
-			if(!checkUserExists(emailhash)){
-		
-		
-				String sql = "INSERT INTO User(name, email, password, salt) "
-					+ "VALUES(?, ?, ?, ?);";
-				PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
 	
-				SecureRandom random = new SecureRandom();
-			    byte bytes[] = new byte[32];
-			    random.nextBytes(bytes);
-			    
-			    String salt = Base64.getEncoder().encodeToString(bytes);
-			    String passhash = passwordHash(password, salt);
-			    
-			    
-			    
-				stmt.setString(1, name);
-				stmt.setString(2, emailhash);
-				stmt.setString(3, passhash);
-				stmt.setString(4, salt);			
+		if(name == null || email == null || password == null || !email.contains("@")) {
+			System.out.println("Input invalido");
+			return false;
+		}
 		
-				int num = stmt.executeUpdate();
-		
-				System.out.println(num + " user(s) inserted.");
-				return true;
-			}else{
-				return false;
-			}
+		String emailhash = DigestUtils.sha256Hex(email);
+		if(!checkUserExists(emailhash)){
+	
+			String sql = "INSERT INTO User(name, email, password, salt) "
+				+ "VALUES(?, ?, ?, ?);";
+			PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
 
+			SecureRandom random = new SecureRandom();
+		    byte bytes[] = new byte[32];
+		    random.nextBytes(bytes);
+		    
+		    String salt = Base64.getEncoder().encodeToString(bytes);
+		    String passhash = passwordHash(password, salt);
+		    
+		    
+		    
+			stmt.setString(1, name);
+			stmt.setString(2, emailhash);
+			stmt.setString(3, passhash);
+			stmt.setString(4, salt);			
+	
+			int num = stmt.executeUpdate();
+	
+			System.out.println(num + " user(s) inserted.");
+			return true;
+		}else{
+			return false;
+		}
 	}	
 
 	private boolean checkUserExists(String email) throws SQLException {
@@ -238,6 +242,10 @@ public class DatabaseLoader {
 
 	public void insertProduct(int product_id, int owner_id, String product_name, int product_price, int quantity, String description) throws SQLException{
 
+		if(product_name == null || product_price == 0 || quantity == 0 || description == null) {
+			System.out.println("Input invalido");
+			return;
+		}
 
 		String sql = "INSERT INTO Product(name, price, quantity, owner_id, description) " + "VALUES( ?, ?, ?, ?, ?);";
 
