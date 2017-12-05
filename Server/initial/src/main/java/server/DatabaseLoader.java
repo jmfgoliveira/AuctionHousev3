@@ -141,36 +141,63 @@ public class DatabaseLoader {
 		
 	}
 
-	public void insertUser(String name, String email, String password) throws SQLException 
+	
+	private String passwordHash(String password, String salt) 
 	{
-			String sql = "INSERT INTO User(name, email, password, salt) "
-				+ "VALUES(?, ?, ?, ?);";
-			PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
-
-			SecureRandom random = new SecureRandom();
-		    byte bytes[] = new byte[32];
-		    random.nextBytes(bytes);
-		    
-		    String salt = Base64.getEncoder().encodeToString(bytes);
-		    String hash = passwordHash(password, salt);
-		    
-		    
-			stmt.setString(1, name);
-			stmt.setString(2, email);
-			stmt.setString(3, hash);
-			stmt.setString(4, salt);			
-	
-			int num = stmt.executeUpdate();
-	
-			System.out.println(num + " user(s) inserted.");
-
-	}	
-
-	private String passwordHash(String password, String salt) {
 		
 		String sha256hex = DigestUtils.sha256Hex(password + salt);
 		return sha256hex;
 	}
+	
+	
+	public boolean insertUser(String name, String email, String password) throws SQLException 
+	{
+			String emailhash = DigestUtils.sha256Hex(email);
+			if(!checkUserExists(emailhash)){
+		
+		
+				String sql = "INSERT INTO User(name, email, password, salt) "
+					+ "VALUES(?, ?, ?, ?);";
+				PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
+	
+				SecureRandom random = new SecureRandom();
+			    byte bytes[] = new byte[32];
+			    random.nextBytes(bytes);
+			    
+			    String salt = Base64.getEncoder().encodeToString(bytes);
+			    String passhash = passwordHash(password, salt);
+			    
+			    
+			    
+				stmt.setString(1, name);
+				stmt.setString(2, emailhash);
+				stmt.setString(3, passhash);
+				stmt.setString(4, salt);			
+		
+				int num = stmt.executeUpdate();
+		
+				System.out.println(num + " user(s) inserted.");
+				return true;
+			}else{
+				return false;
+			}
+
+	}	
+
+	private boolean checkUserExists(String email) throws SQLException {
+		
+		String sql = "select email from User where email=?";
+		PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setString(1, email);
+		
+		ResultSet rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			return true;
+		}
+		return false;		
+	}
+
 	
 	public boolean login(String email, String password) throws SQLException {
 		
@@ -178,15 +205,18 @@ public class DatabaseLoader {
 			return false;
 		}
 		
+		String emailhash = DigestUtils.sha256Hex(email);
+		
+		if(!checkUserExists(emailhash)){
+			return false;
+		}
 		
 		boolean login = false;
 		
 		String sql = "SELECT salt, password FROM User WHERE email = ?";
 		PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
 		
-		System.out.println(email);
-		
-		stmt.setString(1, email);
+		stmt.setString(1, emailhash);
 		ResultSet rs = stmt.executeQuery();
 		rs.next();
     	String salt = rs.getString("salt");
