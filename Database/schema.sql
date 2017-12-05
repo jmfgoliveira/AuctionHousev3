@@ -18,9 +18,9 @@ DROP TABLE IF EXISTS User;
 DROP TABLE IF EXISTS Login;
 
 CREATE TABLE User (
-	id						integer(5) NOT NULL AUTO_INCREMENT,
-	name					varchar(30) NOT NULL,
-	email					varchar(50) NOT NULL UNIQUE,
+	id						integer(10) NOT NULL AUTO_INCREMENT,
+	name					varchar(64) NOT NULL,
+	email					varchar(64) NOT NULL UNIQUE,
 	password				varchar(64) NOT NULL,
 	salt					TEXT default NULL,
 
@@ -57,7 +57,7 @@ CREATE TABLE Auction (
 ) AUTO_INCREMENT = 1;
 
 CREATE TABLE Login (
-	email					varchar(50) NOT NULL,
+	email					varchar(64) NOT NULL,
 	login_date				varchar (30) NOT NULL,
 
 	primary key(email)
