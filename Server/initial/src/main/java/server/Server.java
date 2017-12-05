@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class Server {
 
     private final AtomicLong counter = new AtomicLong();
+    private User currentUser = null;
 
     @RequestMapping("/register")
     public String register(@RequestParam("name") String name, @RequestParam("email") String email,
@@ -17,8 +18,8 @@ public class Server {
     	System.out.println("name: " + name);
     	System.out.println("email: " + email);
     	System.out.println("password: " + password);
-    	new User(counter.intValue(), name, password, email);
-        return name + email + password;
+    	this.currentUser = new User(counter.intValue(), name, password, email);
+        return "User created successfully";
     }
     
     @RequestMapping("/login")
