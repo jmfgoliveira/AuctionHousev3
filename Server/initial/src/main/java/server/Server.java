@@ -10,12 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class Server {
 
     private final AtomicLong counter = new AtomicLong();
+
     private DatabaseLoader dbloader = new DatabaseLoader();
 
     @RequestMapping("/register")
     public String register(@RequestParam("name") String name, @RequestParam("email") String email,
             @RequestParam("password") String password) {
-    	
+  	
     	//TODO verificar input 
     		//invalid input -> return
     	boolean insert = false;

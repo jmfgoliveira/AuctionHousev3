@@ -11,20 +11,20 @@
 
     <!-- Custom styles for this template -->
     <link href="../css/login.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script>
     	function myFunction() {
     	var name = document.getElementById("inputName").value;	
 		var email = document.getElementById("inputEmail").value;	
 		var pass = document.getElementById("inputPassword").value;	
-
 		var url = "http://localhost:8080/register";
 		var newurl = url + '?name=' + name + '&email=' + email + '&password=' + pass;
-		document.location.href = newurl;
         $.get(newurl,
           function(data){
             alert("Data Loaded: " + data);
           });
-		   window.alert(newurl);
+        alert(data);
+        document.location.href = "../home.html";
 		}
 	</script>
   </head>
