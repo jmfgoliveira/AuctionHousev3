@@ -37,25 +37,28 @@
  
         xmlhttp.send(JSON.stringify({name:name, email:email, password:pass, time:time}));
  
-        xmlhttp.onreadystatechange = function(data) {
-    
-       
-          if(xmlhttp.readyState == 4 ){
-            alert(xmlhttp.readyState);
+        xmlhttp.onreadystatechange = function() {
+          if(xmlhttp.readyState == 4){ 
+
+          var splitStatus = xmlhttp.responseText.split("status");
+          var statusNum = splitStatus[1].charAt(2);
+        }
+          if(xmlhttp.readyState == 4 && statusNum == 1) {
+            window.alert("Email already registered");
+            window.alert(localStorage.getItem('LoginToken'));
+          }
+          else if(xmlhttp.readyState == 4 && statusNum == 2) {
             token = xmlhttp.responseText;
-           
-
-            alert(token);
+            localStorage.setItem('LoginToken', token);
+            localStorage.setItem('Email', email);
+            window.location = "../index.html";
           }
-
-
-
-
-
-
-       };
+          else if(xmlhttp.readyState == 4) {
+            window.alert("Sorry, an error has occurred" + xmlhttp.status);
+          }
+        };
  
-          }
+      }
  
  
       var entityMap = {
@@ -87,12 +90,12 @@
   <body>
  
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-      <a class="navbar-brand" href="home.html">eBay</a>
+      <a class="navbar-brand" href="../index.html">eBay</a>
  
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-            <a class="nav-link" href="../home.html">Home</a>
+            <a class="nav-link" href="../index.html">Home</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="products.html">Products</a>

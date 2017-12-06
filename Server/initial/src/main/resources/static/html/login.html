@@ -24,7 +24,6 @@
         checkEmpty(pass);
         
         var url = "https://localhost:8443/login";
-
         var xmlhttp = new XMLHttpRequest();
  
         var token;
@@ -36,21 +35,24 @@
         //xmlhttp.setRequestHeader("Content-Type", "application/json");
  
         xmlhttp.send(JSON.stringify({email:email, password:pass, time:time}));
+
         xmlhttp.onreadystatechange = function() {
-        if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-        //sucessful register
-          token = xmlhttp.responseText;
-          localStorage.setItem('LoginToken', token);
-          localStorage.setItem('Email', email);
-          window.location = "../home.html";
+          if(xmlhttp.readyState == 4){ 
+
+          var splitStatus = xmlhttp.responseText.split("status");
+          var statusNum = splitStatus[1].charAt(2);
+        }
+          if(xmlhttp.readyState == 4 && statusNum == 1) {
+            window.alert("Wrong username or password");
           }
-          else if(xmlhttp.readyState == 4 && xmlhttp.status == 3) {
-          //email already exists - error code 1
-            window.alert("Incorrect Email or Password");
+          else if(xmlhttp.readyState == 4 && statusNum == 2) {
+            token = xmlhttp.responseText;
+            localStorage.setItem('LoginToken', token);
+            localStorage.setItem('Email', email);
+            window.location = "../index.html";
           }
-         
           else if(xmlhttp.readyState == 4) {
-            window.alert("Something went wrong! Error:" + xmlhttp.status);
+            window.alert("Sorry, an error has occurred" + xmlhttp.status);
           }
         };
     }
@@ -82,15 +84,18 @@
   <body>
  
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-      <a class="navbar-brand" href="../home.html">eBay</a>
+      <a class="navbar-brand" href="../index.html">eBay</a>
  
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-            <a class="nav-link" href="../home.html">Home</a>
+            <a class="nav-link" href="../index.html">Home</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="products.html">Products</a>
+          </li>
+                    <li class="nav nav-pull-right">
+            <a class="nav-link" href="new_auction.html">New auction</a>
           </li>
           <li class="nav nav-pull-right">
             <a class="nav-link" href="login.html">Sign in</a>
@@ -112,13 +117,11 @@
         <input type="email" id="inputEmail" onkeypress="return ((event.charCode == 9) || (event.charCode == 45) || (event.charCode == 46) || (event.charCode == 95) || (event.charCode == 64) || (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 48 && event.charCode <= 57) || (event.charCode >= 97 && event.charCode <= 122))" name="email" class="form-control" placeholder="Email address" required autofocus>
        
         <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
-
-         
+        <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>    
 
     </form>
     </div> <!-- /container -->
-    <center><button class="button button4" onclick="javascript:myFunction();">Sign in</button></center> 
+    <center><button class="button button4" onclick="javascript:myFunction();">Sign in</button></center>  
     <style>
           .button {
               background-color: #1E90FF; /* Blue */
@@ -135,6 +138,7 @@
           .button4 {border-radius: 12px;}
           .button4 {width: 100%;}
     </style>
+
   </body>
  
 </html>

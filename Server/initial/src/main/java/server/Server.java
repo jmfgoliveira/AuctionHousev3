@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.StreamingHttpOutputMessage.Body;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -34,10 +35,7 @@ public class Server {
 	private static final int SESSION_TIMEOUT = 30 * 60 * 1000;
 	private static SecureRandom random = new SecureRandom();
 
-	private static final int REPEATED_EMAIL = 1;
-	private static final int INVALID_PARAMS_SIZE = 2;
-	private static final int WRONG_EMAIL = 3;
-	private static final int WRONG_PASS = 5;
+	private static final int ERROR = 1;
 
     private DatabaseLoader dbloader = new DatabaseLoader();
 
@@ -63,6 +61,7 @@ public class Server {
 		System.out.println("EMAIL: " + email);
 		System.out.println("PASS: " + password);
 		
+		
     	boolean insert = false;
     	
 		try {
@@ -84,10 +83,9 @@ public class Server {
 			}
 		}
     	if(insert){
-			return GenToken(email);
+    		return GenToken(email);
 		}else{
-			return Response.status(REPEATED_EMAIL).build();
-		}
+			return Response.status(ERROR).build();		}
     }
     
     @RequestMapping(value={"/login"}, method=RequestMethod.POST)
@@ -97,7 +95,7 @@ public class Server {
     	String email = "";
     	String password = "";
     	JSONParser parser = new JSONParser();
-		JSONObject json;
+    	JSONObject json;
 		try {
 			json = (JSONObject) parser.parse(param);
 			
@@ -130,10 +128,11 @@ public class Server {
 				
 		
 		if(login){
-			return Response.status(WRONG_EMAIL).build();
+			return GenToken(email);
+			
 		}
 		else{
-			return GenToken(email);
+			return Response.status(ERROR).build();
 		}
     }
     

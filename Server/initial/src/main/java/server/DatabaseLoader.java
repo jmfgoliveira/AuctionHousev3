@@ -235,10 +235,11 @@ public class DatabaseLoader {
 
 			stmt2.setString(1,emailhash);
 			stmt2.setString(2,LocalDateTime.now().toString());
+			System.out.println("login ok: " + currentuser);
 		}	
 		
 		rs.close();
-		System.out.println("login ok: " + currentuser);
+		
 		return login;
 		
 	}
