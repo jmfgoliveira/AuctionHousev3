@@ -238,9 +238,9 @@ public class DatabaseLoader {
 		
 	}
 
-	public void insertProduct(int product_id, int owner_id, String product_name, int product_price, int quantity, String description) throws SQLException{
+	public void insertProduct(int owner_id, String product_name, int product_price, int quantity/*, String description*/) throws SQLException{
 
-		if(product_name == null || product_price == 0 || quantity == 0 || description == null) {
+		if(product_name == null || product_price == 0 || quantity == 0 /*|| description == null*/) {
 			System.out.println("Input invalido");
 			return;
 		}
@@ -255,7 +255,7 @@ public class DatabaseLoader {
 		stmt.setInt(3, quantity);
 		stmt.setInt(4, owner_id);
 
-		stmt.setString(5, description);
+		//stmt.setString(5, description);
 
 		stmt.executeUpdate();
 		System.out.println("Product inserted.");

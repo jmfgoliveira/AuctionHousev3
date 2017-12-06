@@ -1,4 +1,5 @@
 server/Application.class
+server/Token.class
 server/User.class
 server/Server.class
 server/DatabaseLoader.class

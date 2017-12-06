@@ -14,19 +14,45 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script>
     	function myFunction() {
-    	var name = document.getElementById("inputName").value;	
-		var email = document.getElementById("inputEmail").value;	
-		var pass = document.getElementById("inputPassword").value;	
-		var url = "http://localhost:8080/register";
-		var newurl = url + '?name=' + name + '&email=' + email + '&password=' + pass;
-        $.get(newurl,
-          function(data){
-            alert("Data Loaded: " + data);
-          });
-        alert(data);
-        document.location.href = "../home.html";
-		}
-	</script>
+        
+      	var name = document.getElementById("inputName").value;	
+    	 	var email = document.getElementById("inputEmail").value;	
+    		var pass = document.getElementById("inputPassword").value;
+
+    		var url = "http://localhost:8080/register";
+
+        var xmlhttp = new XMLHttpRequest();
+
+        var token;
+        var time = (new Date()).getTime();
+
+
+        xmlhttp.open("POST", url, true);
+
+        //xmlhttp.setRequestHeader("Content-Type", "application/json");
+
+        xmlhttp.send(JSON.stringify({name:name, email:email, password:pass, time:time}));
+
+        xmlhttp.onreadystatechange = function() {
+        if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        //sucessful register
+          token = xmlhttp.responseText;
+          localStorage.setItem('LoginToken', token);
+          localStorage.setItem('Email', email);
+          window.location = "../home.html";
+          }
+          else if(xmlhttp.readyState == 4 && xmlhttp.status == 3) {
+          //email already exists - error code 3
+            window.alert("Email already registered!");
+          }
+          
+          else if(xmlhttp.readyState == 4) {
+            window.alert("Something went wrong! Error:" + xmlhttp.status);
+          }
+        };
+
+		  }
+	   </script>
   </head>
 
   <body>

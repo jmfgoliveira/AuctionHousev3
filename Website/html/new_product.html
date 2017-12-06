@@ -11,22 +11,22 @@
 
     <!-- Custom styles for this template -->
     <link href="../css/login.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script>
-    	function myFunction() {
-    	var name = document.getElementById("inputName").value;	
-		var email = document.getElementById("inputEmail").value;	
-		var pass = document.getElementById("inputPassword").value;	
-
-		var url = "http://localhost:8080/register";
-		var newurl = url + '?name=' + name + '&email=' + email + '&password=' + pass;
-		document.location.href = newurl;
-        $.get(newurl,
-          function(data){
-            alert("Data Loaded: " + data);
-          });
-		   window.alert(newurl);
-		}
-	</script>
+      function myFunction() {
+      var name = document.getElementById("inputName").value;  
+      var price = document.getElementById("inputPrice").value;  
+      var quantity = document.getElementById("inputQuantity").value;  
+      var url = "http://localhost:8080/product";
+      var newurl = url + '?name=' + name + '&price=' + price + '&quantity=' + quantity;
+          $.get(newurl,
+            function(data){
+              alert("Data Loaded: " + data);
+            });
+          alert(data);
+          document.location.href = "../home.html";
+      }
+  </script>
   </head>
 
   <body>
@@ -58,13 +58,31 @@
       <form class="form-login">
         <h2 class="form-login-heading">Please, insert New Product here</h2>
         <label for="inputName" class="sr-only">Name</label>
-        <input type="email" id="inputName" class="form-control" placeholder="Name" required autofocus>
+        <input type="text" id="inputName" class="form-control" placeholder="Name" required autofocus>
         <label for="inputName" class="sr-only">Price</label>
-        <input type="email" id="inputName" class="form-control" placeholder="Price" required autofocus>
+        <input type="text" id="inputPrice" class="form-control" placeholder="Price" required autofocus>
         <label for="inputName" class="sr-only">Quantity</label>
-        <input type="email" id="inputName" class="form-control" placeholder="Quantity" required autofocus>
+        <input type="text" id="inputQuantity" class="form-control" placeholder="Quantity" required autofocus>
 
 		</form>
     </div> <!-- /container -->
+    <style>
+          .button {
+              background-color: #1E90FF; /* Blue */
+              border: none;
+              color: white;
+              padding: 16px 32px;
+              text-align: center;
+              text-decoration: none;
+              display: inline-block;
+              font-size: 16px;
+              margin: 0px 2px;
+              cursor: pointer;
+          }
+
+          .button4 {border-radius: 12px;}
+          .button4 {width: 30%;}
+        </style>
+    <center><button class="button button4" onclick="javascript:myFunction();">Sign in</button></center>
   </body>
 </html>
