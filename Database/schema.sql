@@ -12,6 +12,7 @@
 
 					Schema
 */
+DROP TABLE IF EXISTS Purchases;
 DROP TABLE IF EXISTS Auction;
 DROP TABLE IF EXISTS Product;
 DROP TABLE IF EXISTS User;
@@ -31,23 +32,35 @@ CREATE TABLE User (
 CREATE TABLE Product (
 	id						integer(5) NOT NULL AUTO_INCREMENT,
 	name					varchar(30) NOT NULL,
-	price					int(5) NOT NULL,
-	quantity				int(5) NOT NULL,
-	owner_id				integer(5) NOT NULL,
-	description				TEXT default NULL,
+	comment					TEXT default NULL,
 
-	primary key(id),
-	foreign key(owner_id) 	references User(id)
+	primary key(id)
 
 ) AUTO_INCREMENT = 1;
 
 CREATE TABLE Auction (
 	id						integer(5) NOT NULL AUTO_INCREMENT,
-	product_id				integer(5) NOT NULL,
-	seller_id				integer(5) NOT NULL,		
-	buyer_id				integer(5) NOT NULL,		
-	end_date				DATETIME NOT NULL,
-	auction_state 			varchar(30) NOT NULL,
+	seller_id				integer(5) NOT NULL,
+	product_id				integer(5) NOT NULL,	
+	price					int(5) NOT NULL,
+	end_date				varchar (10) NOT NULL,
+	state					varchar(10),
+ 
+	primary key(id),
+	foreign key(seller_id) 	references User(id),
+	foreign key(product_id) references Product(id)
+	
+) AUTO_INCREMENT = 1;
+
+
+CREATE TABLE Purchases (
+	id						integer(5) NOT NULL AUTO_INCREMENT,
+	seller_id				integer(5) NOT NULL,
+	buyer_id				integer(5) NOT NULL,
+	product_id				integer(5) NOT NULL,	
+	price					int(5) NOT NULL,
+	date					varchar (10) NOT NULL,
+	state					varchar(15),
  
 	primary key(id),
 	foreign key(seller_id) 	references User(id),
@@ -55,6 +68,7 @@ CREATE TABLE Auction (
 	foreign key(product_id) references Product(id)
 	
 ) AUTO_INCREMENT = 1;
+
 
 CREATE TABLE Login (
 	email					varchar(64) NOT NULL,
@@ -64,13 +78,14 @@ CREATE TABLE Login (
 );
 
 
-
+INSERT INTO Product(id, name) VALUES (1, "Tablet");
+INSERT INTO Product(id, name) VALUES (2, "Computer");
+INSERT INTO Product(id, name) VALUES (3, "Smartphone");
+INSERT INTO Product(id, name) VALUES (4, "Headphones");
+INSERT INTO Product(id, name) VALUES (5, "Mouse");
 
 
 INSERT INTO User (id, name, email, password) VALUES (1000, "Diogo Castro", "diogo_castro@gmail.com", "doisazul");
 INSERT INTO User (name, email, password) VALUES ("Joana Oliveira", "joana_oliveira@gmail.com", "brinquedo");
 INSERT INTO User (name, email, password) VALUES ("Carlos Vilas", "carlos_vilas@gmail.com", "domingo");
 INSERT INTO User (name, email, password) VALUES ("Ana Maria", "ana_maria@gmail.com", "carro");
-
-INSERT INTO Product(id, name, price, quantity, owner_id) VALUES (10, "bola", 100, 1, 1000);
-INSERT INTO Product(name, price, quantity, owner_id) VALUES ("carro", 100, 1, 1000);

@@ -19,6 +19,8 @@ import com.mysql.cj.jdbc.PreparedStatement;
 
 public class DatabaseLoader {
 	
+	private int currentuser;
+	
 	private static String url = "jdbc:mysql://localhost:3306/auction_house";
 	private static String username = "root";
 	private static String password = "toor";
@@ -215,7 +217,7 @@ public class DatabaseLoader {
 		
 		boolean login = false;
 		
-		String sql = "SELECT salt, password FROM User WHERE email = ?";
+		String sql = "SELECT id, salt, password FROM User WHERE email = ?";
 		PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
 		
 		stmt.setString(1, emailhash);
@@ -223,6 +225,8 @@ public class DatabaseLoader {
 		rs.next();
     	String salt = rs.getString("salt");
     	String pwd = rs.getString("password");
+    	
+    	currentuser=rs.getInt("id");
     	
 		if(pwd.equals(passwordHash(password, salt))) {
 			login = true;
@@ -234,6 +238,7 @@ public class DatabaseLoader {
 		}	
 		
 		rs.close();
+		System.out.println("login ok: " + currentuser);
 		return login;
 		
 	}
@@ -260,7 +265,71 @@ public class DatabaseLoader {
 		stmt.executeUpdate();
 		System.out.println("Product inserted.");
 
-}
+	}
+	
+	
+	public void buyProduct (int id_buyer, int product_id) throws SQLException
+	{
+		
+		
+		//ver se o buyer está logged in
+		
+		Date date = new Date();
+		String str = new SimpleDateFormat("dd-MM-yyyy").format(date);
+		
+		String sql = "SELECT * FROM Auction WHERE product_id=? ORDER BY price ASC"; 
+		PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, product_id);
+		ResultSet rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			//if date blablabla
+			int auction_id = rs.getInt("id");
+			sql = "DELETE FROM Auction WHERE id=?"; 
+			stmt = (PreparedStatement) connection.prepareStatement(sql);
+			stmt.setInt(1, auction_id);
+			stmt.executeUpdate();
+			System.out.println("Purchase ok");
+			
+
+			sql = "INSERT INTO Purchases(seller_id, buyer_id, product_id, price, date, state) " + 
+			"VALUES(?, ?, ?, ?, ?, ?);";
+
+			stmt = (PreparedStatement) connection.prepareStatement(sql);
+			stmt.setInt(1, rs.getInt("seller_id"));
+			stmt.setInt(2, currentuser);
+			stmt.setInt(3, product_id);
+			stmt.setInt(4, rs.getInt("price"));
+			stmt.setString(5, str);
+			stmt.setString(6, "Delivering");
+			stmt.executeUpdate();
+		}
+		
+		
+	}
+	
+	public void sellProduct(int id_seller, int product_id, int price) throws SQLException{
+		
+		String sql = "INSERT INTO Auction(seller_id, product_id, price, end_date, state)" +
+				 "VALUES (?,?,?,?,?)";
+		
+		PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
+		
+		Date date = new Date();
+		date.setMonth(date.getMonth() + 2);
+		String str = new SimpleDateFormat("dd-MM-yyyy").format(date);
+		
+		stmt.setInt(1, id_seller);
+		stmt.setInt(2, product_id);
+		stmt.setInt(3, price);
+		stmt.setString(4, str);
+		stmt.setString(5, "Pending");
+
+
+		stmt.executeUpdate();
+		System.out.println("Auction Created");
+		
+	}
 	
 	public void closeConn() throws SQLException 
 	{

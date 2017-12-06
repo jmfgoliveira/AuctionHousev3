@@ -12,6 +12,7 @@ import java.net.SocketException;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.security.KeyStore;
+import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,9 +30,27 @@ public class Application {
 	
     public static void main(String[] args) {
     	
-    	SpringApplication.run(Application.class, args);
+    	
+    	DatabaseLoader dbloader = new DatabaseLoader();
+    	
+    	try {
+			dbloader.connectDB();
+			dbloader.insertUser("carlos", "carlos@gmail.com", "password");
+			dbloader.login("carlos@gmail.com", "password");
+			dbloader.sellProduct(1004, 1, 100);
+			dbloader.sellProduct(1004, 1, 50);
+			dbloader.sellProduct(1004, 1, 50);
+			dbloader.sellProduct(1004, 1, 200);
+			dbloader.buyProduct(1004, 1);
+			dbloader.closeConn();
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	
     	
+    	
+    	//SpringApplication.run(Application.class, args); 	
 		
     }
     
