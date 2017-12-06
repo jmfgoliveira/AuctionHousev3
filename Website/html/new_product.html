@@ -58,9 +58,11 @@
       <form class="form-login">
         <h2 class="form-login-heading">Please, insert New Product here</h2>
         <label for="inputName" class="sr-only">Name</label>
-        <input type="text" id="inputName" class="form-control" placeholder="Name" required autofocus>
+
+        <input type="text" id="inputName" onkeypress="return ((event.charCode == 45) || (event.charCode == 46) || (event.charCode == 95) || (event.charCode == 64) || (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 48 && event.charCode <= 57) || (event.charCode >= 97 && event.charCode <= 122))" class="form-control" placeholder="Name" required autofocus>
         <label for="inputName" class="sr-only">Price</label>
-        <input type="text" id="inputPrice" class="form-control" placeholder="Price" required autofocus>
+        <input type="text" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57))" id="inputPrice" class="form-control" placeholder="Price" required autofocus>
+
         <label for="inputName" class="sr-only">Quantity</label>
         <input type="text" id="inputQuantity" class="form-control" placeholder="Quantity" required autofocus>
 
