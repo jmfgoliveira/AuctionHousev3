@@ -1,8 +1,8 @@
-server/Application.class
-server/Token.class
-server/User.class
 server/Server.class
-server/DatabaseLoader.class
+server/Application.class
 server/Register.class
-server/Auction.class
 server/Product.class
+server/User.class
+server/DatabaseLoader.class
+server/Auction.class
+server/Token.class

@@ -15,24 +15,75 @@
     <script type="text/javascript" src="jquery-1.6.4.min.js"></script>
 
      <script>
-      function getTasks() {
-        var email = document.getElementById('inputEmail').value;
-        var password = document.getElementById('inputPassword').value;
-        var url = "http://localhost:8080/login"
-        var newurl = url.concat("?email=").concat(email).concat("&password=").concat(password)
-        $.post(newurl,
-          function(data){
-            alert("Data Loaded: " + data);
-          });
+      function myFunction() {
+       
+        var email = escape(document.getElementById("inputEmail").value);   
+        var pass = escape(document.getElementById("inputPassword").value);
+ 
+        checkEmpty(email);
+        checkEmpty(pass);
+        
+        var url = "https://localhost:8443/login";
+
+        var xmlhttp = new XMLHttpRequest();
+ 
+        var token;
+        var time = (new Date()).getTime();
+ 
+ 
+        xmlhttp.open("POST", url, true);
+ 
+        //xmlhttp.setRequestHeader("Content-Type", "application/json");
+ 
+        xmlhttp.send(JSON.stringify({email:email, password:pass, time:time}));
+        xmlhttp.onreadystatechange = function() {
+        if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        //sucessful register
+          token = xmlhttp.responseText;
+          localStorage.setItem('LoginToken', token);
+          localStorage.setItem('Email', email);
+          window.location = "../home.html";
+          }
+          else if(xmlhttp.readyState == 4 && xmlhttp.status == 3) {
+          //email already exists - error code 1
+            window.alert("Incorrect Email or Password");
+          }
+         
+          else if(xmlhttp.readyState == 4) {
+            window.alert("Something went wrong! Error:" + xmlhttp.status);
+          }
+        };
     }
+    var entityMap = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': '&quot;',
+        "'": '&#39;',
+        "/": '&#x2F;'
+      };
+ 
+      function escape(string) {
+        return String(string).replace(/[&<>"'\/]/g, function (s) {
+          return entityMap[s];
+        });
+      }
+                       
+      function checkEmpty(string) {
+        if(string.length == 0){
+          window.alert("Empty field!");
+          window.location("https://localhost:8080/login.html");
+        }
+      }
+ 
     </script>
   </head>
-
+ 
   <body>
-
-	<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+ 
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
       <a class="navbar-brand" href="../home.html">eBay</a>
-
+ 
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
@@ -41,34 +92,36 @@
           <li class="nav-item">
             <a class="nav-link" href="products.html">Products</a>
           </li>
-		  <li class="nav nav-pull-right">
+                    <li class="nav nav-pull-right">
+            <a class="nav-link" href="new_auction.html">New auction</a>
+          </li>
+          <li class="nav nav-pull-right">
             <a class="nav-link" href="login.html">Sign in</a>
           </li>
-		  <li class="nav nav-pull-right">
+          <li class="nav nav-pull-right">
             <a class="nav-link" href="register.html">Sign up</a>
           </li>
         </ul>
-        
+       
       </div>
     </nav>
-  
+ 
     <div class="container">
-
+ 
       <form class="form-login">
         <h2 class="form-login-heading">Please sign in</h2>
-		
+       
         <label for="inputEmail" class="sr-only">Email address</label>
-        <input type="email" id="inputEmail" onkeypress="return ((event.charCode == 45) || (event.charCode == 46) || (event.charCode == 95) || (event.charCode == 64) || (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 48 && event.charCode <= 57) || (event.charCode >= 97 && event.charCode <= 122))" name="email" class="form-control" placeholder="Email address" required autofocus>
-		
+        <input type="email" id="inputEmail" onkeypress="return ((event.charCode == 9) || (event.charCode == 45) || (event.charCode == 46) || (event.charCode == 95) || (event.charCode == 64) || (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 48 && event.charCode <= 57) || (event.charCode >= 97 && event.charCode <= 122))" name="email" class="form-control" placeholder="Email address" required autofocus>
+       
         <label for="inputPassword" class="sr-only">Password</label>
         <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
 
-        <center><button class="button button4" onclick="javascript:getTasks();">Sign in</button></center>
+         
 
-
-		</form>
-		
-    </div> 
+    </form>
+    </div> <!-- /container -->
+    <center><button class="button button4" onclick="javascript:myFunction();">Sign in</button></center> 
     <style>
           .button {
               background-color: #1E90FF; /* Blue */
@@ -82,14 +135,9 @@
               margin: 0px 2px;
               cursor: pointer;
           }
-
           .button4 {border-radius: 12px;}
           .button4 {width: 100%;}
-        </style>
-    
-    <div class="center">
-      <a class="center" href="register.html"> Don't have an account? Register here. </a>
-    </div>
+    </style>
   </body>
  
 </html>

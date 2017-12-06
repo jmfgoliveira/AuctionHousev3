@@ -255,6 +255,7 @@ public class DatabaseLoader {
 	    { 
 	    	stmt.close(); 
 	    }
+		
 		return login;
 		
 	}

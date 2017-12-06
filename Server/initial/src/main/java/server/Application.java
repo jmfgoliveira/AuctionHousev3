@@ -29,7 +29,6 @@ public class Application {
         	System.out.println(e);
         }
     	
-    	
 //    	DatabaseLoader dbloader = new DatabaseLoader();
 //    	
 //    	try {
