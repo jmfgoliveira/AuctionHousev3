@@ -1,11 +1,14 @@
 package server;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.json.simple.JSONObject;
@@ -18,25 +21,33 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @RestController
 public class Server {
 
     private final AtomicLong counter = new AtomicLong();
-    private static ConcurrentHashMap<String, Token> usersLoggedIn;
+    private static ConcurrentHashMap<String, Token> usersLoggedIn = new ConcurrentHashMap<String, Token>();
 	private static final int SESSION_TIMEOUT = 30 * 60 * 1000;
+	private static SecureRandom random = new SecureRandom();
+
+	private static final int REPEATED_EMAIL = 1;
+	private static final int INVALID_PARAMS_SIZE = 2;
+	private static final int WRONG_EMAIL = 3;
+	private static final int WRONG_PASS = 5;
 
     private DatabaseLoader dbloader = new DatabaseLoader();
 
-    //@RequestMapping(value={"/register"}, consumes = MediaType.APPLICATION_JSON, method = RequestMethod.POST)   
     @RequestMapping(value={"/register"}, method=RequestMethod.POST)
-    public String register(@RequestBody String param){
-    	System.out.println("OLAAAA");
+    public Response register(@RequestBody String param) throws JsonProcessingException{
+    	System.out.println("REGISTERRR");
     	String name = "";
     	String email = "";
     	String password = "";
+    	
     	JSONParser parser = new JSONParser();
 		JSONObject json;
 		try {
@@ -56,36 +67,49 @@ public class Server {
     	
 		try {
 			dbloader.connectDB();	
+
 			insert = dbloader.insertUser(name, email, password);
+
 		} catch (ClassNotFoundException | SQLException e) 
 		{
-			return "An error has occured. User not created";
 		}
 		finally 
 		{
 			try {
 				dbloader.closeConn();
+
 			} catch (SQLException e) {
-				return "An error has occured. User not created";
+				return Response.status(400).build();
+		    
 			}
 		}
-		
     	if(insert){
-			return "User created";
+			return GenToken(email);
 		}else{
-			return "User not created";
+			return Response.status(REPEATED_EMAIL).build();
 		}
     }
     
-    @RequestMapping("/login")
-    public String login(@RequestParam("email") String email,
-            @RequestParam("password") String password) {
+    @RequestMapping(value={"/login"}, method=RequestMethod.POST)
+    public Response login(@RequestBody String param) throws JsonProcessingException {
     	
-    	//TODO
-    	//verificar input
-		//invalid input -> return
+    	System.out.println("LOGINNN");
+    	String email = "";
+    	String password = "";
+    	JSONParser parser = new JSONParser();
+		JSONObject json;
+		try {
+			json = (JSONObject) parser.parse(param);
+			
+			email = StringEscapeUtils.escapeHtml((String) json.get("email"));
+			password = StringEscapeUtils.escapeHtml((String) json.get("password"));
+    	
+		}catch(Exception e) { }
+		
+		System.out.println("EMAIL: " + email);
+		System.out.println("PASS: " + password);
     		
-		boolean login = false;
+		boolean login = true;
 		
 		try 
 		{
@@ -94,22 +118,22 @@ public class Server {
 		} 
 		catch (ClassNotFoundException | SQLException e) 
 		{
-			return "Login failed";
 		}
 		finally 
 		{
 			try {
 				dbloader.closeConn();
 			} catch (SQLException e) {
-				return "Login failed";
+				return Response.status(400).build();
 			}
 		}
 				
 		
 		if(login){
-			return "Login successful";
-		}else{
-			return "Login failed";
+			return Response.status(WRONG_EMAIL).build();
+		}
+		else{
+			return GenToken(email);
 		}
     }
     
@@ -215,6 +239,21 @@ public class Server {
 	private boolean checkTokenTimeStamp(long tokenTime) {
 		long serverTime = System.currentTimeMillis();
 		return Math.abs(serverTime - tokenTime) < SESSION_TIMEOUT;
+	}
+	
+
+	private Response GenToken(String email) throws JsonProcessingException {
+		Token token = new Token(nextSessionId(), System.currentTimeMillis());
+		usersLoggedIn.put(email, token);
+		ObjectMapper mapper = new ObjectMapper();
+		String tokenJson = null;
+		tokenJson = mapper.writeValueAsString(token);
+		return Response.ok(tokenJson, MediaType.APPLICATION_JSON).build();
+	}
+	
+	private String nextSessionId() {
+		String s = new BigInteger(130, random).toString(32);
+		return s;
 	}
 	
 }

@@ -234,7 +234,7 @@ public class DatabaseLoader {
 		}	
 		
 		rs.close();
-		return login;
+		return true;
 		
 	}
 
