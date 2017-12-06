@@ -16,34 +16,35 @@
     <link href="../css/products.css" rel="stylesheet">
 
     <script>
-    	function getText(){
+
+		function getText(){
     		var text = document.getElementById("comment1").value;
     		document.getElementById("comment1").value = "";
-    		document.getElementById("loadcomment1").value = document.getElementById("loadcomment1").value + "\n"+ text;
+    		if ( text != "") { document.getElementById("loadcomment1").value = document.getElementById("loadcomment1").value + "\n"+ text; }
 		}
 
 		function getText2(){
     		var text = document.getElementById("comment2").value;
     		document.getElementById("comment2").value = "";
-    		document.getElementById("loadcomment2").value = document.getElementById("loadcomment2").value + "\n"+ text;
+    		if ( text != "") { document.getElementById("loadcomment2").value = document.getElementById("loadcomment2").value + "\n"+ text; }
 		}
 
 		function getText3(){
     		var text = document.getElementById("comment3").value;
     		document.getElementById("comment3").value = "";
-    		document.getElementById("loadcomment3").value = document.getElementById("loadcomment3").value + "\n"+ text;
+    		if ( text != "") { document.getElementById("loadcomment3").value = document.getElementById("loadcomment3").value + "\n"+ text; }
 		}
 
 		function getText4(){
     		var text = document.getElementById("comment4").value;
     		document.getElementById("comment4").value = "";
-    		document.getElementById("loadcomment4").value = document.getElementById("loadcomment4").value + "\n"+ text;
+    		if ( text != "") { document.getElementById("loadcomment4").value = document.getElementById("loadcomment4").value + "\n"+ text; }
 		}
 
 		function getText5(){
     		var text = document.getElementById("comment5").value;
     		document.getElementById("comment5").value = "";
-    		document.getElementById("loadcomment5").value = document.getElementById("loadcomment5").value + "\n"+ text;
+    		if ( text != "") { document.getElementById("loadcomment5").value = document.getElementById("loadcomment5").value + "\n"+ text; }
 		}
     </script>	
   </head>
@@ -61,6 +62,9 @@
           <li class="nav-item">
             <a class="nav-link" href="products.html">Products</a>
           </li>
+                    <li class="nav nav-pull-right">
+            <a class="nav-link" href="new_auction.html">New auction</a>
+          </li>
           <li class="nav nav-pull-right">
             <a class="nav-link" href="login.html">Sign in</a>
           </li>
@@ -76,7 +80,8 @@
 
       <section class="jumbotron text-center">
         <div class="container">
-          <h1 class="jumbotron-heading">Welcome to our product section</h1>
+          <h1 class="jumbotron-heading mb-1">Welcome to our product section</h1>
+          <a href="new_auction.html"><button class="btn mt-3">Sell a product here!</button></a>
       </section>
 
       <div class="album text-muted">
@@ -95,10 +100,10 @@
 					
 							<h1 class="card-text">Comments:</h1>
 					
-							<textarea readonly style="resize:none" class="card-text  floating-box" placeholder="Load comments here..." 
+							<textarea readonly style="resize:none" class="card-text  floating-box" placeholder="Your comment will appear here!" 
 									name="comment" id="loadcomment1"></textarea>
 						
-							<textarea style="resize:none" class="card-text floating-box" placeholder="Enter your comment here..." 
+							<textarea style="resize:none" onkeypress="return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode == 126) || (event.charCode == 96) || (event.charCode == 94) || (event.charCode == 146))" class="card-text floating-box" placeholder="Enter your comment here..." 
 										name="comment" id="comment1"></textarea>								
 						
 							<input class="card-text" onClick="getText()" type="submit" id="submit1" name="submit" value="Add comment">
@@ -133,10 +138,10 @@
 					<div class="card">
 						<h1 class="card-text">Comments:</h1>
 					
-							<textarea readonly style="resize:none" class="card-text  floating-box" placeholder="Load comments here..." 
+							<textarea readonly style="resize:none" class="card-text  floating-box" placeholder="Your comment will appear here!" 
 									name="comment" id="loadcomment2"></textarea>
 						
-							<textarea style="resize:none" class="card-text floating-box" placeholder="Enter your comment here..." 
+							<textarea style="resize:none" onkeypress="return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode == 126) || (event.charCode == 96) || (event.charCode == 94) || (event.charCode == 146))" class="card-text floating-box" placeholder="Enter your comment here..." 
 										name="comment" id="comment2"></textarea>								
 						
 							<input class="card-text" onClick="getText2()" type="submit" id="submit2" name="submit" value="Add comment">
@@ -170,10 +175,10 @@
 					<div class="card">
 						<h1 class="card-text">Comments:</h1>
 					
-							<textarea readonly style="resize:none" class="card-text  floating-box" placeholder="Load comments here..." 
+							<textarea readonly style="resize:none" class="card-text  floating-box" placeholder="Your comment will appear here!" 
 									name="comment" id="loadcomment3"></textarea>
 						
-							<textarea style="resize:none" class="card-text floating-box" placeholder="Enter your comment here..." 
+							<textarea style="resize:none" onkeypress="return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode == 126) || (event.charCode == 96) || (event.charCode == 94) || (event.charCode == 146))" class="card-text floating-box" placeholder="Enter your comment here..." 
 										name="comment" id="comment3"></textarea>								
 						
 							<input class="card-text"  onClick="getText3()" type="submit" id="submit3" name="submit" value="Add comment">
@@ -208,10 +213,10 @@
 					<div class="card">
 						<h1 class="card-text">Comments:</h1>
 					
-							<textarea readonly style="resize:none" class="card-text  floating-box" placeholder="Load comments here..." 
+							<textarea readonly style="resize:none" class="card-text  floating-box" placeholder="Your comment will appear here!" 
 									name="comment" id="loadcomment4"></textarea>
 						
-							<textarea style="resize:none" class="card-text floating-box" placeholder="Enter your comment here..." 
+							<textarea style="resize:none" onkeypress="return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode == 126) || (event.charCode == 96) || (event.charCode == 94) || (event.charCode == 146))" class="card-text floating-box" placeholder="Enter your comment here..." 
 										name="comment" id="comment4"></textarea>								
 						
 							<input class="card-text" onClick="getText4()" type="submit" id="submit4" name="submit" value="Add comment">
@@ -245,10 +250,10 @@
 					<div class="card">
 						<h1 class="card-text">Comments:</h1>
 					
-							<textarea readonly style="resize:none" class="card-text  floating-box" placeholder="Load comments here..." 
+							<textarea readonly style="resize:none" class="card-text  floating-box" placeholder="Your comment will appear here!" 
 									name="comment" id="loadcomment5"></textarea>
 						
-							<textarea style="resize:none" class="card-text floating-box" placeholder="Enter your comment here..." 
+							<textarea style="resize:none" onkeypress="return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode == 126) || (event.charCode == 96) || (event.charCode == 94) || (event.charCode == 146))" class="card-text floating-box" placeholder="Enter your comment here..." 
 										name="comment" id="comment5"></textarea>								
 						
 							<input class="card-text" onClick="getText5()" type="submit" id="submit5" name="submit" value="Add comment">
