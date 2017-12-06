@@ -12,6 +12,8 @@
 
 					Schema
 */
+
+DROP TABLE IF EXISTS Comments;
 DROP TABLE IF EXISTS Purchases;
 DROP TABLE IF EXISTS Auction;
 DROP TABLE IF EXISTS Product;
@@ -35,6 +37,19 @@ CREATE TABLE Product (
 	comment					TEXT default NULL,
 
 	primary key(id)
+
+) AUTO_INCREMENT = 1;
+
+CREATE TABLE Comments (
+	id						integer(10) NOT NULL AUTO_INCREMENT,
+	user_id					integer(10) NOT NULL,
+	product_id				integer(5) NOT NULL,
+	comment					varchar(100) default NULL,
+	date					varchar (10) NOT NULL,
+	
+	primary key(id),
+	foreign key(user_id) 	references User(id),
+	foreign key(product_id) references Product(id)
 
 ) AUTO_INCREMENT = 1;
 
