@@ -1,5 +1,8 @@
 package server;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Properties;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -20,9 +24,10 @@ public class DatabaseLoader {
 	
 	private int currentuser;
 	
-	private static String url = "jdbc:mysql://localhost:3306/auction_house";
-	private static String username = "root";
-	private static String password = "toor";
+	private static String url = null;
+	private static String username = null;
+	private static String password = null;
+	private static String driver = null;
 	private Connection connection;
 	
 	private String allusersQuery = "select * from User";
@@ -31,14 +36,34 @@ public class DatabaseLoader {
 	
 	
 	public DatabaseLoader(){
-		
+		Properties props = new Properties();	
+		FileInputStream in;
+		try {
+			in = new FileInputStream("src/main/resources/db.properties");
+			props.load(in);
+			in.close();
+			this.driver = props.getProperty("jdbc.driver");
+			if (driver != null) {
+			    Class.forName(driver) ;
+			}else{
+				Class.forName("com.mysql.cj.jdbc.Driver") ;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.url = props.getProperty("jdbc.url");
+		this.username = props.getProperty("jdbc.username");
+		this.password = props.getProperty("jdbc.password");
 	}
 	
 	public void connectDB() throws ClassNotFoundException, SQLException
 	{
-		System.out.println("Connecting database...");
-		Class.forName("com.mysql.cj.jdbc.Driver");  
-		connection=DriverManager.getConnection(url,username,password); 
+		System.out.println("Connecting database..."); 
+		connection=DriverManager.getConnection(this.url,this.username,this.password); 
 		System.out.println("Database connected!");
 	}
 	
