@@ -18,11 +18,17 @@
     <script>
     	window.onload=function() { 
 		   getPrices();
+		   getComments();
 		   document.getElementById("TabletPrice").innerHTML = localStorage.getItem('Tablet');
 		   document.getElementById("ComputerPrice").innerHTML = localStorage.getItem('Computer');
 		   document.getElementById("SmartphonePrice").innerHTML = localStorage.getItem('Smartphone');
 		   document.getElementById("HeadphonesPrice").innerHTML = localStorage.getItem('Headphones');
 		   document.getElementById("MousePrice").innerHTML = localStorage.getItem('Mouse');
+		   document.getElementById("TabletCom").innerHTML = localStorage.getItem('TabletCom');
+		   document.getElementById("ComputerCom").innerHTML = localStorage.getItem('ComputerCom');
+		   document.getElementById("SmartphoneCom").innerHTML = localStorage.getItem('SmartphoneCom');
+		   document.getElementById("HeadphonesCom").innerHTML = localStorage.getItem('HeadphonesCom');
+		   document.getElementById("MouseCom").innerHTML = localStorage.getItem('MouseCom');
 		}; 
     	function buy1(){
     		localStorage.setItem('buy', "Tablet");
@@ -81,7 +87,6 @@
         };
     }
         function getPrices() {
-        alert("ola");
         var url = "https://localhost:8443/get_prices";
         var xmlhttp = new XMLHttpRequest();
  
@@ -93,24 +98,47 @@
         xmlhttp.onreadystatechange = function() {
           if(xmlhttp.readyState == 4){ 
 
-          var splitStatus = xmlhttp.responseText.split("status");
-          var statusNum = splitStatus[1].charAt(2);
-        }
-          if(xmlhttp.readyState == 4 && statusNum == 1) {
-            window.alert("Failed");
-          }
-          else if(xmlhttp.readyState == 4 && statusNum == 2) {
-            token = xmlhttp.responseText;
-            localStorage.setItem('LoginToken', token);
-            localStorage.setItem('Email', email);
-            window.location = "products.html";
-          }
-          else if(xmlhttp.readyState == 4) {
-            window.alert("Sorry, an error has occurred" + xmlhttp.status);
-          }
+	          var splitStatus = xmlhttp.responseText.split("entity");
+	          var statusNum = splitStatus[1].split("[");
+	          var statusNum = statusNum[1].split(",");
+	          localStorage.setItem('Tablet', statusNum[0]);
+	          localStorage.setItem('Computer', statusNum[1]);
+	          localStorage.setItem('Smartphone', statusNum[2]);
+	          localStorage.setItem('Headphones', statusNum[3]);
+	          localStorage.setItem('Mouse', statusNum[4]);
+
+       	 }
+          
         };
  
       }
+
+      function getComments() {
+        var url = "https://localhost:8443/get_comments";
+        var xmlhttp = new XMLHttpRequest();
+ 
+        xmlhttp.open("POST", url, true);
+        //xmlhttp.setRequestHeader("Content-Type", "application/json");
+ 
+        xmlhttp.send();
+ 
+        xmlhttp.onreadystatechange = function() {
+          if(xmlhttp.readyState == 4){ 
+	          var splitStatus = xmlhttp.responseText.split("entity");
+	          var statusNum = splitStatus[1].split("[");
+	          var statusNum = statusNum[1].split(",");
+	          localStorage.setItem('TabletCom', statusNum[0]);
+	          localStorage.setItem('ComputerCom', statusNum[1]);
+	          localStorage.setItem('SmartphoneCom', statusNum[2]);
+	          localStorage.setItem('HeadphonesCom', statusNum[3]);
+	          localStorage.setItem('MouseCom', statusNum[4]);
+
+       	 }
+          
+        };
+ 
+      }
+
           var entityMap = {
         "&": "&amp;",
         "<": "&lt;",
@@ -217,7 +245,7 @@
 							<h1 class="card-text">Comments:</h1>
 					
 							<textarea readonly style="resize:none" class="card-text  floating-box" placeholder="Your comment will appear here!" 
-									name="comment" id="loadcomment1"></textarea>
+									name="comment" id="TabletCom"></textarea>
 						
 							<textarea style="resize:none" onkeypress="return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode == 126) || (event.charCode == 96) || (event.charCode == 94) || (event.charCode == 146))" class="card-text floating-box" placeholder="Enter your comment here..." 
 										name="comment" id="comment1"></textarea>								
@@ -232,10 +260,6 @@
 					  <br>
             <h1 class="card-text">Price</h1>
             <h1 class="card-text" id="price1"><span id="TabletPrice"></span></h1>
-					  <h1 class="card-text">Seller:</h1>
-            <h1 class="card-text" id="seller5">load seller here</h1>
-					  <h1 class="card-text">End Date:</h1>
-            <h1 class="card-text" id="date5">load end date here</h1>
 					  <br>
 					  <input class="card-text" type="submit" id="buy1" onclick="javascript:buy1();" name="Buy Product" value="Buy Product">
 					</div>
@@ -255,7 +279,7 @@
 						<h1 class="card-text">Comments:</h1>
 					
 							<textarea readonly style="resize:none" class="card-text  floating-box" placeholder="Your comment will appear here!" 
-									name="comment" id="loadcomment2"></textarea>
+									name="comment" id="ComputerCom"></textarea>
 						
 							<textarea style="resize:none" onkeypress="return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode == 126) || (event.charCode == 96) || (event.charCode == 94) || (event.charCode == 146))" class="card-text floating-box" placeholder="Enter your comment here..." 
 										name="comment" id="comment2"></textarea>								
@@ -269,10 +293,6 @@
 					  <br>
             <h1 class="card-text">Price</h1>
             <h1 class="card-text" id="price2"><span id="ComputerPrice"></span></h1>
-					  <h1 class="card-text">Seller:</h1>
-            <h1 class="card-text" id="seller5">load seller here</h1>
-					  <h1 class="card-text">End Date:</h1>
-            <h1 class="card-text" id="date5">load end date here</h1>
 					  <br>
 					  <input class="card-text" type="submit" id="buy1" onclick="javascript:buy2();"name="Buy Product" value="Buy Product">
 					</div>
@@ -292,7 +312,7 @@
 						<h1 class="card-text">Comments:</h1>
 					
 							<textarea readonly style="resize:none" class="card-text  floating-box" placeholder="Your comment will appear here!" 
-									name="comment" id="loadcomment3"></textarea>
+									name="comment" id="SmartphoneCom"></textarea>
 						
 							<textarea style="resize:none" onkeypress="return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode == 126) || (event.charCode == 96) || (event.charCode == 94) || (event.charCode == 146))" class="card-text floating-box" placeholder="Enter your comment here..." 
 										name="comment" id="comment3"></textarea>								
@@ -306,10 +326,6 @@
 					  <br>
             <h1 class="card-text">Price</h1>
             <h1 class="card-text" id="price3"><span id="SmartphonePrice"></span></h1>
-					  <h1 class="card-text">Seller:</h1>
-            <h1 class="card-text" id="seller5">load seller here</h1>
-					  <h1 class="card-text">End Date:</h1>
-            <h1 class="card-text" id="date5">load end date here</h1>
 					  <br>
 					  <input class="card-text" type="submit" id="buy1" onclick="javascript:buy3();" name="Buy Product" value="Buy Product">
 					</div>
@@ -330,7 +346,7 @@
 						<h1 class="card-text">Comments:</h1>
 					
 							<textarea readonly style="resize:none" class="card-text  floating-box" placeholder="Your comment will appear here!" 
-									name="comment" id="loadcomment4"></textarea>
+									name="comment" id="HeadphonesCom"></textarea>
 						
 							<textarea style="resize:none" onkeypress="return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode == 126) || (event.charCode == 96) || (event.charCode == 94) || (event.charCode == 146))" class="card-text floating-box" placeholder="Enter your comment here..." 
 										name="comment" id="comment4"></textarea>								
@@ -344,10 +360,6 @@
 					  <br>
             <h1 class="card-text">Price</h1>
             <h1 class="card-text" id="price4"><span id="HeadphonesPrice"></span></h1>
-					  <h1 class="card-text">Seller:</h1>
-            <h1 class="card-text" id="seller5">load seller here</h1>
-					  <h1 class="card-text">End Date:</h1>
-            <h1 class="card-text" id="date5">load end date here</h1>
 					  <br>
 					  <input class="card-text" type="submit" id="buy1" onclick="javascript:buy4();" name="Buy Product" value="Buy Product">
 					</div>
@@ -367,7 +379,7 @@
 						<h1 class="card-text">Comments:</h1>
 					
 							<textarea readonly style="resize:none" class="card-text  floating-box" placeholder="Your comment will appear here!" 
-									name="comment" id="loadcomment5"></textarea>
+									name="comment" id="MouseCom"></textarea>
 						
 							<textarea style="resize:none" onkeypress="return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode == 126) || (event.charCode == 96) || (event.charCode == 94) || (event.charCode == 146))" class="card-text floating-box" placeholder="Enter your comment here..." 
 										name="comment" id="comment5"></textarea>								
@@ -381,10 +393,6 @@
 					  <br>
             <h1 class="card-text">Price</h1>
             <h1 class="card-text" id="price5"><span id="MousePrice"></span></h1>
-					  <h1 class="card-text">Seller:</h1>
-            <h1 class="card-text" id="seller5">load seller here</h1>
-					  <h1 class="card-text">End Date:</h1>
-            <h1 class="card-text" id="date5">load end date here</h1>
 					  <br>
 					  <input class="card-text" type="submit" id="buy1" name="Buy Product" value="Buy Product">
 					</div>

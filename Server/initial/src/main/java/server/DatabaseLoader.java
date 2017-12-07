@@ -419,16 +419,118 @@ public class DatabaseLoader {
 		
 	}
 	
-	public String[] getPrices() throws SQLException {
-		String[] price = null;
+	public int[] getPrices() throws SQLException {
+		int[] price = {0,0,0,0,0,0};
+		int priceid = 0;
 		
-		for(int i = 1; i < 6; i++) {
-			price[i-1] = auxPrices(i);
-			System.out.println(price[i-1]);
-			System.out.println("iiiii: "  + i);
+		String sql = "select price from Auction where product_id=? order by price asc";
+		PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, 1);
+		ResultSet rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			priceid=rs.getInt("price");
+			price[0]=priceid;
+		}
+		
+		sql = "select price from Auction where product_id=? order by price asc";
+		stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, 2);
+		rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			priceid=rs.getInt("price");
+			price[1]=priceid;
+		}
+		
+		sql = "select price from Auction where product_id=? order by price asc";
+		stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, 3);
+		rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			priceid=rs.getInt("price");
+			price[2]=priceid;
+		}
+		
+		sql = "select price from Auction where product_id=? order by price asc";
+		stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, 4);
+		rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			priceid=rs.getInt("price");
+			price[3]=priceid;
+		}
+			
+		sql = "select price from Auction where product_id=? order by price asc";
+		stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, 5);
+		rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			priceid=rs.getInt("price");
+			price[4]=priceid;
 		}
 		
 		return price;
+	}
+	
+	public String[] getComments() throws SQLException {
+		String[] comments = {"","","","","",""};
+		String comm = "";
+		
+		String sql = "select comment from Comments where product_id=?";
+		PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, 1);
+		ResultSet rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			comm=rs.getString("comment");
+			comments[0]=comm;
+		}
+		
+		sql = "select comment from Comments where product_id=?";
+		stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, 2);
+		rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			comm=rs.getString("comment");
+			comments[1]=comm;
+		}
+		
+		sql = "select comment from Comments where product_id=?";
+		stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, 3);
+		rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			comm=rs.getString("comment");
+			comments[2]=comm;
+		}
+		
+		sql = "select comment from Comments where product_id=?";
+		stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, 4);
+		rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			comm=rs.getString("comment");
+			comments[3]=comm;
+		}
+			
+		sql = "select comment from Comments where product_id=?";
+		stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, 5);
+		rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			comm=rs.getString("comment");
+			comments[4]=comm;
+		}
+		
+		return comments;
 	}
 
 	private String auxPrices(int i) throws SQLException, NullPointerException {
@@ -436,19 +538,15 @@ public class DatabaseLoader {
 	
 		String sql = "SELECT price FROM Auction WHERE product_id=?";
 		PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
-		System.out.println("#33");
 		stmt.setInt(1, i);
-		System.out.println("*********");
 		ResultSet rs = stmt.executeQuery();
-		System.out.println("444");
 		
 		if(!rs.next()){
 			return "Product not available";
 		}
 		else {
 			rs.next();
-			System.out.println("555");
-			System.out.println("priceeeeeeeeeee111111111111: " + rs.getInt("price"));
+			
 			int p = rs.getInt("price");
 			return Integer.toString(p);
 		}
