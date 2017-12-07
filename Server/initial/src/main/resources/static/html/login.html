@@ -81,11 +81,11 @@
     </script>
   </head>
  
-  <body>
+    <body>
  
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-      <a class="navbar-brand" href="../index.html">eBay</a>
- 
+      <a class="navbar-brand" href="../index.html">Auction House</a>
+      
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
@@ -95,9 +95,6 @@
             <a class="nav-link" href="products.html">Products</a>
           </li>
                     <li class="nav nav-pull-right">
-            <a class="nav-link" href="new_auction.html">New auction</a>
-          </li>
-          <li class="nav nav-pull-right">
             <a class="nav-link" href="new_auction.html">New auction</a>
           </li>
           <li class="nav nav-pull-right">
@@ -120,11 +117,13 @@
         <input type="email" id="inputEmail" onkeypress="return ((event.charCode == 9) || (event.charCode == 45) || (event.charCode == 46) || (event.charCode == 95) || (event.charCode == 64) || (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 48 && event.charCode <= 57) || (event.charCode >= 97 && event.charCode <= 122))" name="email" class="form-control" placeholder="Email address" required autofocus>
        
         <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>    
+        <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
+
+         
 
     </form>
     </div> <!-- /container -->
-    <center><button class="button button4" onclick="javascript:myFunction();">Sign in</button></center>  
+    <center><button class="button button4" onclick="javascript:myFunction();">Add auction</button></center>
     <style>
           .button {
               background-color: #1E90FF; /* Blue */
@@ -141,7 +140,6 @@
           .button4 {border-radius: 12px;}
           .button4 {width: 100%;}
     </style>
-
   </body>
  
 </html>

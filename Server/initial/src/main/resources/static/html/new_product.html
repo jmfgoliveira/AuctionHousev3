@@ -17,25 +17,20 @@
        
         var name = escape(document.getElementById("inputName").value); 
         var price = escape(document.getElementById("inputPrice").value);   
-        var quantity = escape(document.getElementById("inputQuantity").value);
- 
+        var token = localStorage.getItem('LoginToken');
+        var email = localStorage.getItem('Email');
+
         checkEmpty(name);
         checkEmpty(price);
-        checkEmpty(quantity);
  
-        var url = "https://localhost:8443/product";
- 
+        var url = "https://localhost:8443/new_product";
         var xmlhttp = new XMLHttpRequest();
-
-        var token;
         var time = (new Date()).getTime();
  
- 
         xmlhttp.open("POST", url, true);
- 
         //xmlhttp.setRequestHeader("Content-Type", "application/json");
  
-        xmlhttp.send(JSON.stringify({name:name, price:price, quantity:quantity, time:time}));
+        xmlhttp.send(JSON.stringify({token:token, email:email, name:name, price:price, time:time}));
  
         xmlhttp.onreadystatechange = function(data) {
         if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -53,14 +48,35 @@
 
         };
  
-          }
+      }
+          var entityMap = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': '&quot;',
+        "'": '&#39;',
+        "/": '&#x2F;'
+      };
+ 
+      function escape(string) {
+        return String(string).replace(/[&<>"'\/]/g, function (s) {
+          return entityMap[s];
+        });
+      }
+                       
+      function checkEmpty(string) {
+        if(string.length == 0){
+          window.alert("Empty field!");
+          window.location("https://localhost:8080/register.html");
+        }
+      }
   </script>
   </head>
 
   <body>
 
-	<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-      <a class="navbar-brand" href="../index.html">eBay</a>
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <a class="navbar-brand" href="../index.html">Auction House</a>
 
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
@@ -76,7 +92,7 @@
 		  <li class="nav nav-pull-right">
             <a class="nav-link" href="login.html">Sign in</a>
           </li>
-		      <li class="nav nav-pull-right">
+          <li class="nav nav-pull-right">
             <a class="nav-link" href="register.html">Sign up</a>
           </li>
         </ul>
@@ -97,7 +113,7 @@
         <label for="inputName" class="sr-only">Quantity</label>
         <input type="text" id="inputQuantity" class="form-control" placeholder="Quantity" required autofocus>
 
-		</form>
+    </form>
     </div> <!-- /container -->
     <style>
           .button {
@@ -112,9 +128,8 @@
               margin: 0px 2px;
               cursor: pointer;
           }
-
           .button4 {border-radius: 12px;}
-          .button4 {width: 30%;}
+          .button4 {width: 20%;}
         </style>
     <center><button class="button button4" onclick="javascript:myFunction();">Sign in</button></center>
   </body>
