@@ -135,14 +135,13 @@ public class Server {
 		}
     }
     
-    @RequestMapping(value={"/new_product"}, method=RequestMethod.POST)
+    @RequestMapping(value={"/new_auction"}, method=RequestMethod.POST)
     public Response product(@RequestBody String param) throws ParseException, IOException {
   	    
     	System.out.println("NEW PRODUCT");
     	String email = "";
     	String token = "";
     	String price = "";
-    	String quantity = "";
     	String name = "";
     	JSONParser parser = new JSONParser();
     	JSONObject json;
@@ -152,7 +151,6 @@ public class Server {
 			email = StringEscapeUtils.escapeHtml((String) json.get("email"));
 			token = StringEscapeUtils.escapeHtml((String) json.get("token"));
 			price = StringEscapeUtils.escapeHtml((String) json.get("price"));
-			quantity = StringEscapeUtils.escapeHtml((String) json.get("quantity"));
 			name = StringEscapeUtils.escapeHtml((String) json.get("name"));
     	
 		}catch(Exception e) { }
@@ -163,15 +161,9 @@ public class Server {
 		System.out.println("email: " + email);
 		System.out.println("token: " + token);
 		System.out.println("price: " + price);
-		System.out.println("quantity: " + quantity);
 		System.out.println("name: " + name);
 		
-    	
-    	System.out.println("VALIDTOKEN: " + ValidateToken(randNum, ts, email));
-//    	ValidToken(token, email);
-    	
-    	boolean insert = false;
-    	int intPrice = 0;
+		int intPrice = 0;
     	int intQuantity = 0;
     	
     	if(isInteger(price)) {
@@ -180,34 +172,36 @@ public class Server {
     	else {
     		return Response.status(ERROR).build();
     	}
-    	if(isInteger(quantity)) {
-    		intQuantity = Integer.parseInt(quantity);
-	   	}
-	   	else {
-	   		return Response.status(ERROR).build();
-	   	}
     	
-		try {
-			dbloader.connectDB();	
-		//	insert = dbloader.insertProduct(int owner_id, name, intPrice, intQuantity);
-		} catch (ClassNotFoundException | SQLException e) 
-		{
-			return Response.status(ERROR).build();
-		}
-		finally 
-		{
+    	System.out.println("VALIDTOKEN: " + ValidateToken(randNum, ts, email));
+    	
+    	if(ValidateToken(randNum, ts, email)) {
+    	
+	    	boolean insert = false;
+	    		    	
 			try {
-				dbloader.closeConn();
-			} catch (SQLException e) {
+				dbloader.connectDB();	
+			//	insert = dbloader.insertProduct(int owner_id, name, intPrice, intQuantity);
+			} catch (ClassNotFoundException | SQLException e) 
+			{
 				return Response.status(ERROR).build();
 			}
-		}
-		
-    	if(insert){
-    		return GenToken(email);
-		}else{
-			return Response.status(ERROR).build();
-		}
+			finally 
+			{
+				try {
+					dbloader.closeConn();
+				} catch (SQLException e) {
+					return Response.status(ERROR).build();
+				}
+			}
+			
+	    	if(insert){
+	    		return GenToken(email);
+			}else{
+				return Response.status(ERROR).build();
+			}
+    	}
+    	return Response.status(ERROR).build();
     }
     
     public String extractRandNum(String token) {
