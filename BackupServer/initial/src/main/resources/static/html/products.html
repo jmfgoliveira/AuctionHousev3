@@ -1,0 +1,416 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Auction House</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../css/products.css" rel="stylesheet">
+
+    <script>
+    	window.onload=function() { 
+		   getPrices();
+		   getComments();
+		   document.getElementById("TabletPrice").innerHTML = localStorage.getItem('Tablet');
+		   document.getElementById("ComputerPrice").innerHTML = localStorage.getItem('Computer');
+		   document.getElementById("SmartphonePrice").innerHTML = localStorage.getItem('Smartphone');
+		   document.getElementById("HeadphonesPrice").innerHTML = localStorage.getItem('Headphones');
+		   document.getElementById("MousePrice").innerHTML = localStorage.getItem('Mouse');
+		   document.getElementById("TabletCom").innerHTML = localStorage.getItem('TabletCom');
+		   document.getElementById("ComputerCom").innerHTML = localStorage.getItem('ComputerCom');
+		   document.getElementById("SmartphoneCom").innerHTML = localStorage.getItem('SmartphoneCom');
+		   document.getElementById("HeadphonesCom").innerHTML = localStorage.getItem('HeadphonesCom');
+		   document.getElementById("MouseCom").innerHTML = localStorage.getItem('MouseCom');
+		}; 
+    	function buy1(){
+    		localStorage.setItem('buy', "Tablet");
+    		myFunction();
+    	}
+    	function buy2(){
+    		localStorage.setItem('buy', "Computer");
+    		myFunction();
+    	}
+    	function buy3(){
+    		localStorage.setItem('buy', "Smartphone");
+    		myFunction();
+    	}
+    	function buy4(){
+    		localStorage.setItem('buy', "Headphones");
+    		myFunction();
+    	}
+    	function buy5(){
+    		localStorage.setItem('buy', "Mouse");
+    		myFunction();
+    	}
+
+    	function myFunction() {
+        
+        var token = localStorage.getItem('LoginToken');
+        var email = localStorage.getItem('Email');
+        var productId = localStorage.getItem('buy');
+ 
+        var url = "https://localhost:8443/buy_product";
+        var xmlhttp = new XMLHttpRequest();
+        var time = (new Date()).getTime();
+ 
+        xmlhttp.open("POST", url, true);
+        //xmlhttp.setRequestHeader("Content-Type", "application/json");
+ 
+        xmlhttp.send(JSON.stringify({token:token, email:email, productId:productId, time:time}));
+ 
+        xmlhttp.onreadystatechange = function() {
+          if(xmlhttp.readyState == 4){ 
+
+          var splitStatus = xmlhttp.responseText.split("status");
+          var statusNum = splitStatus[1].charAt(2);
+        }
+          if(xmlhttp.readyState == 4 && statusNum == 1) {
+            window.alert("Failed");
+          }
+          else if(xmlhttp.readyState == 4 && statusNum == 2) {
+            token = xmlhttp.responseText;
+            localStorage.setItem('LoginToken', token);
+            localStorage.setItem('Email', email);
+            window.location = "products.html";
+          }
+          else if(xmlhttp.readyState == 4) {
+            window.alert("Sorry, an error has occurred" + xmlhttp.status);
+          }
+        };
+    }
+        function getPrices() {
+        var url = "https://localhost:8443/get_prices";
+        var xmlhttp = new XMLHttpRequest();
+ 
+        xmlhttp.open("POST", url, true);
+        //xmlhttp.setRequestHeader("Content-Type", "application/json");
+ 
+        xmlhttp.send();
+ 
+        xmlhttp.onreadystatechange = function() {
+          if(xmlhttp.readyState == 4){ 
+
+	          var splitStatus = xmlhttp.responseText.split("entity");
+	          var statusNum = splitStatus[1].split("[");
+	          var statusNum = statusNum[1].split(",");
+	          localStorage.setItem('Tablet', statusNum[0]);
+	          localStorage.setItem('Computer', statusNum[1]);
+	          localStorage.setItem('Smartphone', statusNum[2]);
+	          localStorage.setItem('Headphones', statusNum[3]);
+	          localStorage.setItem('Mouse', statusNum[4]);
+
+       	 }
+          
+        };
+ 
+      }
+
+      function getComments() {
+        var url = "https://localhost:8443/get_comments";
+        var xmlhttp = new XMLHttpRequest();
+ 
+        xmlhttp.open("POST", url, true);
+        //xmlhttp.setRequestHeader("Content-Type", "application/json");
+ 
+        xmlhttp.send();
+ 
+        xmlhttp.onreadystatechange = function() {
+          if(xmlhttp.readyState == 4){ 
+	          var splitStatus = xmlhttp.responseText.split("entity");
+	          var statusNum = splitStatus[1].split("[");
+	          var statusNum = statusNum[1].split(",");
+	          localStorage.setItem('TabletCom', statusNum[0]);
+	          localStorage.setItem('ComputerCom', statusNum[1]);
+	          localStorage.setItem('SmartphoneCom', statusNum[2]);
+	          localStorage.setItem('HeadphonesCom', statusNum[3]);
+	          localStorage.setItem('MouseCom', statusNum[4]);
+
+       	 }
+          
+        };
+ 
+      }
+
+          var entityMap = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': '&quot;',
+        "'": '&#39;',
+        "/": '&#x2F;'
+      };
+ 
+      function escape(string) {
+        return String(string).replace(/[&<>"'\/]/g, function (s) {
+          return entityMap[s];
+        });
+      }
+                       
+      function checkEmpty(string) {
+        if(string.length == 0){
+          window.alert("Empty field!");
+          window.location("https://localhost:8443/html/new_auction.html");
+        }
+      }
+
+    	function getText(){
+    		var text = document.getElementById("comment1").value;
+    		document.getElementById("comment1").value = "";
+    		document.getElementById("loadcomment1").value = document.getElementById("loadcomment1").value + "\n"+ text;
+		}
+
+		function getText2(){
+    		var text = document.getElementById("comment2").value;
+    		document.getElementById("comment2").value = "";
+    		document.getElementById("loadcomment2").value = document.getElementById("loadcomment2").value + "\n"+ text;
+		}
+
+		function getText3(){
+    		var text = document.getElementById("comment3").value;
+    		document.getElementById("comment3").value = "";
+    		document.getElementById("loadcomment3").value = document.getElementById("loadcomment3").value + "\n"+ text;
+		}
+
+		function getText4(){
+    		var text = document.getElementById("comment4").value;
+    		document.getElementById("comment4").value = "";
+    		document.getElementById("loadcomment4").value = document.getElementById("loadcomment4").value + "\n"+ text;
+		}
+
+		function getText5(){
+    		var text = document.getElementById("comment5").value;
+    		document.getElementById("comment5").value = "";
+    		document.getElementById("loadcomment5").value = document.getElementById("loadcomment5").value + "\n"+ text;
+		}
+    </script>	
+  </head>
+
+ <body>
+
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <a class="navbar-brand" href="../index.html">Auction House</a>
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="../index.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="products.html">Products</a>
+          </li>
+                    <li class="nav nav-pull-right">
+            <a class="nav-link" href="new_auction.html">New auction</a>
+          </li>
+          <li class="nav nav-pull-right">
+            <a class="nav-link" href="login.html">Sign in</a>
+          </li>
+		      <li class="nav nav-pull-right">
+            <a class="nav-link" href="register.html">Sign up</a>
+          </li>
+        </ul>
+        
+      </div>
+    </nav>
+
+    <main role="main">
+
+      <section class="jumbotron text-center">
+        <div class="container">
+          <h1 class="jumbotron-heading mb-1">Welcome to our product section</h1>
+          <a href="new_auction.html"><button class="btn mt-3">Sell a product here!</button></a>
+      </section>
+
+      <div class="album text-muted">
+        <div class="container">
+			<div class="row">
+				<div class="col-md-4">
+					<div class="card">
+					  <h1 class="card-text">Tablet:</h1>
+					  <img src="../resources/tablet.png" style="width:200px;height:200px" alt="Card image cap">
+					  <h1 class="card-text">Product Description:</h1>
+					  <p class="card-text">This is a tablet</p>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card">
+					
+							<h1 class="card-text">Comments:</h1>
+					
+							<textarea readonly style="resize:none" class="card-text  floating-box" placeholder="Your comment will appear here!" 
+									name="comment" id="TabletCom"></textarea>
+						
+							<textarea style="resize:none" onkeypress="return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode == 126) || (event.charCode == 96) || (event.charCode == 94) || (event.charCode == 146))" class="card-text floating-box" placeholder="Enter your comment here..." 
+										name="comment" id="comment1"></textarea>								
+						
+							<input class="card-text" onClick="getText()" type="submit" id="submit1" name="submit" value="Add comment">
+				
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card">
+					  <h1 class="card-text">Buy Product:</h1>
+					  <br>
+            <h1 class="card-text">Price</h1>
+            <h1 class="card-text" id="price1"><span id="TabletPrice"></span></h1>
+					  <br>
+					  <input class="card-text" type="submit" id="buy1" onclick="javascript:buy1();" name="Buy Product" value="Buy Product">
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-4">
+					<div class="card">
+					  <h1 class="card-text">Computer:</h1>
+					  <img src="../resources/computer.png" style="width:200px;height:200px"alt="Card image cap">
+					  <h1 class="card-text">Product Description:</h1>
+					   <p class="card-text">This is a computer</p>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card">
+						<h1 class="card-text">Comments:</h1>
+					
+							<textarea readonly style="resize:none" class="card-text  floating-box" placeholder="Your comment will appear here!" 
+									name="comment" id="ComputerCom"></textarea>
+						
+							<textarea style="resize:none" onkeypress="return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode == 126) || (event.charCode == 96) || (event.charCode == 94) || (event.charCode == 146))" class="card-text floating-box" placeholder="Enter your comment here..." 
+										name="comment" id="comment2"></textarea>								
+						
+							<input class="card-text" onClick="getText2()" type="submit" id="submit2" name="submit" value="Add comment">
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card">
+					  <h1 class="card-text">Buy Product:</h1>
+					  <br>
+            <h1 class="card-text">Price</h1>
+            <h1 class="card-text" id="price2"><span id="ComputerPrice"></span></h1>
+					  <br>
+					  <input class="card-text" type="submit" id="buy1" onclick="javascript:buy2();"name="Buy Product" value="Buy Product">
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-4">
+					<div class="card">
+					  <h1 class="card-text">Smartphone:</h1>
+					  <img src="../resources/smartphone.png" style="width:200px;height:200px" alt="Card image cap">
+					  <h1 class="card-text">Product Description:</h1>
+					  <p class="card-text">This is a smartphone</p>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card">
+						<h1 class="card-text">Comments:</h1>
+					
+							<textarea readonly style="resize:none" class="card-text  floating-box" placeholder="Your comment will appear here!" 
+									name="comment" id="SmartphoneCom"></textarea>
+						
+							<textarea style="resize:none" onkeypress="return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode == 126) || (event.charCode == 96) || (event.charCode == 94) || (event.charCode == 146))" class="card-text floating-box" placeholder="Enter your comment here..." 
+										name="comment" id="comment3"></textarea>								
+						
+							<input class="card-text"  onClick="getText3()" type="submit" id="submit3" name="submit" value="Add comment">
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card">
+					  <h1 class="card-text">Buy Product:</h1>
+					  <br>
+            <h1 class="card-text">Price</h1>
+            <h1 class="card-text" id="price3"><span id="SmartphonePrice"></span></h1>
+					  <br>
+					  <input class="card-text" type="submit" id="buy1" onclick="javascript:buy3();" name="Buy Product" value="Buy Product">
+					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-md-4">
+					<div class="card">
+					  <h1 class="card-text">Headphones:</h1>
+					  <img src="../resources/headphones.png" style="width:200px;height:200px" alt="Card image cap">
+					  <h1 class="card-text">Product Description:</h1>
+					  <p class="card-text">These are headphones</p>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card">
+						<h1 class="card-text">Comments:</h1>
+					
+							<textarea readonly style="resize:none" class="card-text  floating-box" placeholder="Your comment will appear here!" 
+									name="comment" id="HeadphonesCom"></textarea>
+						
+							<textarea style="resize:none" onkeypress="return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode == 126) || (event.charCode == 96) || (event.charCode == 94) || (event.charCode == 146))" class="card-text floating-box" placeholder="Enter your comment here..." 
+										name="comment" id="comment4"></textarea>								
+						
+							<input class="card-text" onClick="getText4()" type="submit" id="submit4" name="submit" value="Add comment">
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card">
+					  <h1 class="card-text">Buy Product:</h1>
+					  <br>
+            <h1 class="card-text">Price</h1>
+            <h1 class="card-text" id="price4"><span id="HeadphonesPrice"></span></h1>
+					  <br>
+					  <input class="card-text" type="submit" id="buy1" onclick="javascript:buy4();" name="Buy Product" value="Buy Product">
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-4">		
+					<div class="card">
+					  <h1 class="card-text">Mouse:</h1>
+					  <img src="../resources/mouse.png" style="width:200px;height:200px" alt="Card image cap">
+					  <h1 class="card-text">Product Description:</h1>
+					  <p class="card-text">This is a mouse</p>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card">
+						<h1 class="card-text">Comments:</h1>
+					
+							<textarea readonly style="resize:none" class="card-text  floating-box" placeholder="Your comment will appear here!" 
+									name="comment" id="MouseCom"></textarea>
+						
+							<textarea style="resize:none" onkeypress="return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode == 126) || (event.charCode == 96) || (event.charCode == 94) || (event.charCode == 146))" class="card-text floating-box" placeholder="Enter your comment here..." 
+										name="comment" id="comment5"></textarea>								
+						
+							<input class="card-text" onClick="getText5()" type="submit" onclick="javascript:buy5();" id="submit5" name="submit" value="Add comment">
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card">
+					  <h1 class="card-text">Buy Product:</h1>
+					  <br>
+            <h1 class="card-text">Price</h1>
+            <h1 class="card-text" id="price5"><span id="MousePrice"></span></h1>
+					  <br>
+					  <input class="card-text" type="submit" id="buy1" name="Buy Product" value="Buy Product">
+					</div>
+				</div>
+			</div>
+			
+			
+          </div>   
+      </div>
+
+    </main>
+
+    <footer class="container">
+      <p>&copy; Instituto Superior Técnico 2017</p>
+    </footer>
+
+    <!-- JavaScript
+    ================================================== -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>

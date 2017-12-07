@@ -1,5 +1,8 @@
 package server;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Properties;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -20,9 +24,10 @@ public class DatabaseLoader {
 	
 	private int currentuser;
 	
-	private static String url = "jdbc:mysql://localhost:3306/auction_house";
-	private static String username = "root";
-	private static String password = "toor";
+	private static String url = null;
+	private static String username = null;
+	private static String password = null;
+	private static String driver = null;
 	private Connection connection;
 	
 	private String allusersQuery = "select * from User";
@@ -31,14 +36,34 @@ public class DatabaseLoader {
 	
 	
 	public DatabaseLoader(){
-		
+		Properties props = new Properties();	
+		FileInputStream in;
+		try {
+			in = new FileInputStream("src/main/resources/db.properties");
+			props.load(in);
+			in.close();
+			this.driver = props.getProperty("jdbc.driver");
+			if (driver != null) {
+			    Class.forName(driver) ;
+			}else{
+				Class.forName("com.mysql.cj.jdbc.Driver") ;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.url = props.getProperty("jdbc.url");
+		this.username = props.getProperty("jdbc.username");
+		this.password = props.getProperty("jdbc.password");
 	}
 	
 	public void connectDB() throws ClassNotFoundException, SQLException
 	{
-		System.out.println("Connecting database...");
-		Class.forName("com.mysql.cj.jdbc.Driver");  
-		connection=DriverManager.getConnection(url,username,password); 
+		System.out.println("Connecting database..."); 
+		connection=DriverManager.getConnection(this.url,this.username,this.password); 
 		System.out.println("Database connected!");
 	}
 	
@@ -255,6 +280,7 @@ public class DatabaseLoader {
 	    { 
 	    	stmt.close(); 
 	    }
+		
 		return login;
 		
 	}
@@ -262,6 +288,7 @@ public class DatabaseLoader {
 	public void commentProduct (int user_id, int product_id, String comment) throws SQLException{
 		
 		//ver se o user está logged in
+		
 		
 		Date date = new Date();
 		String str = new SimpleDateFormat("dd-MM-yyyy").format(date);
@@ -287,10 +314,20 @@ public class DatabaseLoader {
 	}
 	
 	
-	public void buyProduct (int id_buyer, int product_id) throws SQLException
+	public boolean buyProduct (String email, String product_name) throws SQLException
 	{
 		
+		if(!productExists(product_name)){
+			return false;
+		}
 		
+		String emailhash = DigestUtils.sha256Hex(email);
+		if(!checkUserExists(emailhash)){
+			return false;
+		}
+		
+		int id_seller= getSellerId(email);
+		int product_id=getProductId(product_name);
 		//ver se o buyer está logged in
 		
 		Date date = new Date();
@@ -332,28 +369,43 @@ public class DatabaseLoader {
 		    { 
 		    	stmt.close(); 
 		    }
+		    System.out.println("Product Bought");
+			return true;
 			
 		}
+		if (rs!= null)
+	    { 
+	    	rs.close(); 
+	    }
+		return false;
 	}
 	
-	public void sellProduct(int id_seller, int product_id, int price) throws SQLException
+	public boolean sellProduct(String email, String product_name, int price) throws SQLException
 	{
+	
+		if(!productExists(product_name)){
+			return false;
+		}
+		
+		String emailhash = DigestUtils.sha256Hex(email);
+		if(!checkUserExists(emailhash)){
+			return false;
+		}
+		
+		int id_seller= getSellerId(email);
+		int product_id=getProductId(product_name);
 		
 		String sql = "INSERT INTO Auction(seller_id, product_id, price, end_date, state)" +
 				 "VALUES (?,?,?,?,?)";
-		
 		PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
-		
 		Date date = new Date();
 		date.setMonth(date.getMonth() + 2);
 		String str = new SimpleDateFormat("dd-MM-yyyy").format(date);
-		
 		stmt.setInt(1, id_seller);
 		stmt.setInt(2, product_id);
 		stmt.setInt(3, price);
 		stmt.setString(4, str);
 		stmt.setString(5, "Pending");
-
 
 		stmt.executeUpdate();
         
@@ -361,11 +413,213 @@ public class DatabaseLoader {
 	    { 
 	    	stmt.close(); 
 	    }
-		
+		  
 		System.out.println("Auction Created");
+		return true;
 		
 	}
 	
+	public int[] getPrices() throws SQLException {
+
+		int[] price = {0,0,0,0,0,0};
+		int priceid = 0;
+		
+		String sql = "select price from Auction where product_id=? order by price asc";
+		PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, 1);
+		ResultSet rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			priceid=rs.getInt("price");
+			price[0]=priceid;
+		}
+		
+		sql = "select price from Auction where product_id=? order by price asc";
+		stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, 2);
+		rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			priceid=rs.getInt("price");
+			price[1]=priceid;
+		}
+		
+		sql = "select price from Auction where product_id=? order by price asc";
+		stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, 3);
+		rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			priceid=rs.getInt("price");
+			price[2]=priceid;
+		}
+		
+		sql = "select price from Auction where product_id=? order by price asc";
+		stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, 4);
+		rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			priceid=rs.getInt("price");
+			price[3]=priceid;
+		}
+			
+		sql = "select price from Auction where product_id=? order by price asc";
+		stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, 5);
+		rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			priceid=rs.getInt("price");
+			price[4]=priceid;
+/* NOT TESTED
+		int[] price = null;
+		
+		int priceid = 0;
+		
+		for(int i =0; i<4; i++){
+			String sql = "select price from Auction where product_id=? order by price asc";
+			PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
+			stmt.setInt(1, i++);
+			ResultSet rs = stmt.executeQuery();
+			
+			if(rs.next()){
+				priceid=rs.getInt("price");
+			}
+			
+			price[i]=priceid;
+*/
+		}
+		
+		return price;
+	}
+	
+	public String[] getComments() throws SQLException {
+		String[] comments = {"","","","","",""};
+		String comm = "";
+		
+		String sql = "select comment from Comments where product_id=?";
+		PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, 1);
+		ResultSet rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			comm=rs.getString("comment");
+			comments[0]=comm;
+		}
+		
+		sql = "select comment from Comments where product_id=?";
+		stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, 2);
+		rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			comm=rs.getString("comment");
+			comments[1]=comm;
+		}
+		
+		sql = "select comment from Comments where product_id=?";
+		stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, 3);
+		rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			comm=rs.getString("comment");
+			comments[2]=comm;
+		}
+		
+		sql = "select comment from Comments where product_id=?";
+		stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, 4);
+		rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			comm=rs.getString("comment");
+			comments[3]=comm;
+		}
+			
+		sql = "select comment from Comments where product_id=?";
+		stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, 5);
+		rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			comm=rs.getString("comment");
+			comments[4]=comm;
+		}
+		
+		return comments;
+	}
+
+	private String auxPrices(int i) throws SQLException, NullPointerException {
+		String price = "";
+	
+		String sql = "SELECT price FROM Auction WHERE product_id=?";
+		PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setInt(1, i);
+		ResultSet rs = stmt.executeQuery();
+		
+		if(!rs.next()){
+			return "Product not available";
+		}
+		else {
+			rs.next();
+			
+			int p = rs.getInt("price");
+			return Integer.toString(p);
+		}
+		
+	}
+	
+	
+	private boolean productExists(String product_name) throws SQLException {
+		
+		String sql = "SELECT id FROM Product WHERE name=?";
+		PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
+		
+		stmt.setString(1, product_name);
+		
+		ResultSet rs = stmt.executeQuery();
+		
+		return rs.next();
+	}
+
+	private int getProductId(String product_name) throws SQLException {
+	
+		int id = 1;
+		
+		String sql = "SELECT id FROM Product WHERE name=?";
+		PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
+		
+		stmt.setString(1, product_name);
+		ResultSet rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			id = rs.getInt("id");
+		}
+		
+		return id;
+	}
+
+	private int getSellerId(String email) throws SQLException {
+		
+		int seller_id=0;
+		
+		String emailhash = DigestUtils.sha256Hex(email);
+		
+		String sql = "select id from User where email=?";
+		PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setString(1, emailhash);
+		
+		ResultSet rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			seller_id=rs.getInt("id");
+		}
+		
+		return seller_id;
+	}
+
 	public void closeConn() throws SQLException 
 	{
 		

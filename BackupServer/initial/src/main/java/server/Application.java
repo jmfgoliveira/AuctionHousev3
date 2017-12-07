@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.boot.SpringApplication;
@@ -35,6 +36,10 @@ public class Application {
 				e.printStackTrace();
 			}
     	}
+    	try {
+    		Runtime runtime = Runtime.getRuntime();
+    		Process process = runtime.exec("src/main/resources/firewall.txt");
+    	}catch(Exception e) {}
     	SpringApplication.run(Application.class, args); 
     }
     

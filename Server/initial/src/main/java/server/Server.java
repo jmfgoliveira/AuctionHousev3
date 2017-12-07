@@ -242,7 +242,9 @@ public class Server {
     	int[] prices = null;
     	try {
 			dbloader.connectDB();
+
 			prices = dbloader.getPrices();
+
 			for(int i=0; i<5; i++) {
 			}
 		} catch (ClassNotFoundException | SQLException e) 

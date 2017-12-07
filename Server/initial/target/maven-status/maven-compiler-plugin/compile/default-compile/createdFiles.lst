@@ -1,9 +1,0 @@
-server/LifeProof.class
-server/Server.class
-server/Application.class
-server/Register.class
-server/Product.class
-server/User.class
-server/DatabaseLoader.class
-server/Auction.class
-server/Token.class

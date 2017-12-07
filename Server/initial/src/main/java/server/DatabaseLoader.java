@@ -420,6 +420,7 @@ public class DatabaseLoader {
 	}
 	
 	public int[] getPrices() throws SQLException {
+
 		int[] price = {0,0,0,0,0,0};
 		int priceid = 0;
 		
@@ -471,6 +472,23 @@ public class DatabaseLoader {
 		if(rs.next()){
 			priceid=rs.getInt("price");
 			price[4]=priceid;
+/* NOT TESTED
+		int[] price = null;
+		
+		int priceid = 0;
+		
+		for(int i =0; i<4; i++){
+			String sql = "select price from Auction where product_id=? order by price asc";
+			PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
+			stmt.setInt(1, i++);
+			ResultSet rs = stmt.executeQuery();
+			
+			if(rs.next()){
+				priceid=rs.getInt("price");
+			}
+			
+			price[i]=priceid;
+*/
 		}
 		
 		return price;
