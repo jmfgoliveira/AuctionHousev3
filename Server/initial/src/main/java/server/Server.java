@@ -40,7 +40,6 @@ public class Server {
 
     @RequestMapping(value={"/register"}, method=RequestMethod.POST)
     public Response register(@RequestBody String param) throws JsonProcessingException{
-    	System.out.println("REGISTERRR");
     	String name = "";
     	String email = "";
     	String password = "";
@@ -55,10 +54,6 @@ public class Server {
 			password = StringEscapeUtils.escapeHtml((String) json.get("password"));
     	
 		}catch(Exception e) { }
-		
-		System.out.println("NAME: " + name);
-		System.out.println("EMAIL: " + email);
-		System.out.println("PASS: " + password);
 		
 		
     	boolean insert = false;
@@ -90,7 +85,6 @@ public class Server {
     @RequestMapping(value={"/login"}, method=RequestMethod.POST)
     public Response login(@RequestBody String param) throws JsonProcessingException {
     	
-    	System.out.println("LOGINNN");
     	String email = "";
     	String password = "";
     	JSONParser parser = new JSONParser();
@@ -102,9 +96,6 @@ public class Server {
 			password = StringEscapeUtils.escapeHtml((String) json.get("password"));
     	
 		}catch(Exception e) { }
-		
-		System.out.println("EMAIL: " + email);
-		System.out.println("PASS: " + password);
     		
 		boolean login = true;
 		
@@ -138,7 +129,6 @@ public class Server {
     @RequestMapping(value={"/sell_product"}, method=RequestMethod.POST)
     public Response sellProduct(@RequestBody String param) throws ParseException, IOException {
   	    
-    	System.out.println("SELL PRODUCT");
     	String email = "";
     	String token = "";
     	String price = "";
@@ -158,10 +148,6 @@ public class Server {
 		String randNum = extractRandNum(token);
 		String ts = extractTimestamp(token);
 		
-		System.out.println("email: " + email);
-		System.out.println("token: " + token);
-		System.out.println("price: " + price);
-		System.out.println("name: " + name);
 		
 		int intPrice = 0;
     	int intQuantity = 0;
@@ -205,7 +191,6 @@ public class Server {
     @RequestMapping(value={"/buy_product"}, method=RequestMethod.POST)
     public Response buyProduct(@RequestBody String param) throws ParseException, IOException {
   	    
-    	System.out.println("BUY PRODUCT");
     	String email = "";
     	String token = "";
     	String productName = "";
@@ -222,10 +207,6 @@ public class Server {
 		
 		String randNum = extractRandNum(token);
 		String ts = extractTimestamp(token);
-		
-		System.out.println("email: " + email);
-		System.out.println("token: " + token);
-		System.out.println("price: " + productName);
 		  	    	
     	if(ValidateToken(randNum, ts, email)) {
     	
@@ -258,12 +239,13 @@ public class Server {
     
     @RequestMapping(value={"/get_prices"}, method=RequestMethod.POST)
     public Response getPrices() throws ParseException, IOException {
-    	System.out.println("Get_prices");
+    	int[] prices = null;
     	try {
 			dbloader.connectDB();
-			int[] prices = dbloader.getPrices();
+
+			prices = dbloader.getPrices();
+
 			for(int i=0; i<5; i++) {
-				System.out.println("Price: " + prices[i]);
 			}
 		} catch (ClassNotFoundException | SQLException e) 
 		{
@@ -277,8 +259,30 @@ public class Server {
 				return Response.status(ERROR).build();
 			}
 		}
-    	return Response.status(ERROR).build();
-    	
+    	return Response.ok(prices, MediaType.APPLICATION_JSON).build();	
+    }
+    
+    @RequestMapping(value={"/get_comments"}, method=RequestMethod.POST)
+    public Response getComments() throws ParseException, IOException {
+    	String[] comments = null;
+    	try {
+			dbloader.connectDB();
+			comments = dbloader.getComments();
+			for(int i=0; i<5; i++) {
+			}
+		} catch (ClassNotFoundException | SQLException e) 
+		{
+			return Response.status(ERROR).build();
+		}
+		finally 
+		{
+			try {
+				dbloader.closeConn();
+			} catch (SQLException e) {
+				return Response.status(ERROR).build();
+			}
+		}
+    	return Response.ok(comments, MediaType.APPLICATION_JSON).build();	
     }
     
     public String extractRandNum(String token) {
@@ -343,15 +347,12 @@ public class Server {
 
 	private boolean checkTokenTimeStamp(long tokenTime) {
 		long serverTime = System.currentTimeMillis();
-		System.out.println("serverTime: " + serverTime);
-		System.out.println("ts: " + tokenTime);
 		return Math.abs(serverTime - tokenTime) < SESSION_TIMEOUT;
 	}
 	
 
 	private Response GenToken(String email) throws JsonProcessingException {
 		Token token = new Token(nextSessionId(), System.currentTimeMillis());
-		System.out.println("gen token email " + email);
 		Application.usersLoggedIn.put(email, token);
 		ObjectMapper mapper = new ObjectMapper();
 		String tokenJson = null;

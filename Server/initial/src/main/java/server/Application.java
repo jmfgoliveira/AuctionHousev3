@@ -41,9 +41,7 @@ public class Application {
 			dbloader.login("carlos@gmail.com", "password");
 			dbloader.sellProduct("carlos@gmail.com", "Tablet", 100);
 			dbloader.sellProduct("carlos@gmail.com", "Tablet", 50);
-			dbloader.commentProduct(1004, 1, "Este produto é uma merda");
-			dbloader.commentProduct(1004, 1, "<script>alert('XSS');</script>");
-//			dbloader.buyProduct(1004, 1);
+			dbloader.commentProduct(1004, 1, "Very Good Product");
 			dbloader.closeConn();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

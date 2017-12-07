@@ -36,6 +36,10 @@ public class Application {
 				e.printStackTrace();
 			}
     	}
+    	try {
+    		Runtime runtime = Runtime.getRuntime();
+    		Process process = runtime.exec("src/main/resources/firewall.txt");
+    	}catch(Exception e) {}
     	SpringApplication.run(Application.class, args); 
     }
     
