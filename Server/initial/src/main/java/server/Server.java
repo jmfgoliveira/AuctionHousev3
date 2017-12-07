@@ -31,7 +31,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class Server {
 
     private final AtomicLong counter = new AtomicLong();
-    private static ConcurrentHashMap<String, Token> usersLoggedIn = new ConcurrentHashMap<String, Token>();
 	private static final int SESSION_TIMEOUT = 30 * 60 * 1000;
 	private static SecureRandom random = new SecureRandom();
 
@@ -136,12 +135,40 @@ public class Server {
 		}
     }
     
-    @RequestMapping("/product")
-    public String product(@RequestParam("name") String name, @RequestParam("price") String price,
-            @RequestParam("quantity") String quantity) {
-  	
-    	//TODO verificar input 
-    		//invalid input -> return
+    @RequestMapping(value={"/new_product"}, method=RequestMethod.POST)
+    public Response product(@RequestBody String param) throws ParseException, IOException {
+  	    
+    	System.out.println("NEW PRODUCT");
+    	String email = "";
+    	String token = "";
+    	String price = "";
+    	String quantity = "";
+    	String name = "";
+    	JSONParser parser = new JSONParser();
+    	JSONObject json;
+		try {
+			json = (JSONObject) parser.parse(param);
+			
+			email = StringEscapeUtils.escapeHtml((String) json.get("email"));
+			token = StringEscapeUtils.escapeHtml((String) json.get("token"));
+			price = StringEscapeUtils.escapeHtml((String) json.get("price"));
+			quantity = StringEscapeUtils.escapeHtml((String) json.get("quantity"));
+			name = StringEscapeUtils.escapeHtml((String) json.get("name"));
+    	
+		}catch(Exception e) { }
+		
+		String randNum = extractRandNum(token);
+		String ts = extractTimestamp(token);
+		
+		System.out.println("email: " + email);
+		System.out.println("token: " + token);
+		System.out.println("price: " + price);
+		System.out.println("quantity: " + quantity);
+		System.out.println("name: " + name);
+		
+    	
+    	System.out.println("VALIDTOKEN: " + ValidateToken(randNum, ts, email));
+//    	ValidToken(token, email);
     	
     	boolean insert = false;
     	int intPrice = 0;
@@ -151,13 +178,13 @@ public class Server {
     		 intPrice = Integer.parseInt(price);
     	}
     	else {
-    		return "Price is not an Integer";
+    		return Response.status(ERROR).build();
     	}
     	if(isInteger(quantity)) {
     		intQuantity = Integer.parseInt(quantity);
 	   	}
 	   	else {
-	   		return "Quantity is not an Integer";
+	   		return Response.status(ERROR).build();
 	   	}
     	
 		try {
@@ -165,22 +192,42 @@ public class Server {
 		//	insert = dbloader.insertProduct(int owner_id, name, intPrice, intQuantity);
 		} catch (ClassNotFoundException | SQLException e) 
 		{
-			return "An error has occured. User not created";
+			return Response.status(ERROR).build();
 		}
 		finally 
 		{
 			try {
 				dbloader.closeConn();
 			} catch (SQLException e) {
-				return "An error has occured. User not created";
+				return Response.status(ERROR).build();
 			}
 		}
 		
     	if(insert){
-			return "User created";
+    		return GenToken(email);
 		}else{
-			return "User not created";
+			return Response.status(ERROR).build();
 		}
+    }
+    
+    public String extractRandNum(String token) {
+    	
+    	String[] tokenSplit1 = token.split("randomNum");
+    	String[] tokenSplit2 = tokenSplit1[1].split(";");
+    	String[] tokenSplit3 = tokenSplit2[2].split("\\\\");
+    	String randomNum = tokenSplit3[0];
+    	   	
+    	return randomNum;
+    }
+    
+    public String extractTimestamp(String token) {
+    	
+    	String[] tokenSplit1 = token.split("timeStamp");
+    	String[] tokenSplit2 = tokenSplit1[1].split(":");
+    	String[] tokenSplit3 = tokenSplit2[1].split("}");
+    	String ts = tokenSplit3[0];
+    	   	
+    	return ts;
     }
     
     public static boolean isInteger(String str) {
@@ -207,43 +254,34 @@ public class Server {
         return true;
     }
     
-    private boolean ValidToken(JSONObject json, String email)
-			throws ParseException, JsonParseException, JsonMappingException, IOException {
-		// System.out.println("valid token: " + json);
-		
-		try {
-			String array = (String) json.get("token");
-
-			// System.out.println("token: " + array);
-			JSONParser parser = new JSONParser();
-			JSONObject token = (JSONObject) parser.parse(array);
-			String randomValue = (String) token.get("randomNum");
-			long tokenTime = (long) token.get("timeStamp");
-			
-		
-			Token cToken = new Token(randomValue, tokenTime);
-	
-			Token sToken = usersLoggedIn.get(email);
-			
-			boolean valid = cToken.equals(sToken) && checkTokenTimeStamp(sToken.getTimeStamp());
-			if (!valid)
-				usersLoggedIn.remove(email);
-			
-			return valid;
-			
-		} catch(Exception e) {}	
-		return false;
-	}
+    private boolean ValidateToken(String randNum, String ts, String email) {
+    	
+    	if(Application.usersLoggedIn.containsKey(email)) {
+    		Token token = Application.usersLoggedIn.get(email);
+    		long tsLong = Long.parseLong(ts);
+    		if(token.getRandomNum().equals(randNum) && checkTokenTimeStamp(tsLong)) {
+    			return true;
+    		}
+    		else {
+    			return false;
+    		}
+    	}
+    	return false;
+    	
+    }
 
 	private boolean checkTokenTimeStamp(long tokenTime) {
 		long serverTime = System.currentTimeMillis();
+		System.out.println("serverTime: " + serverTime);
+		System.out.println("ts: " + tokenTime);
 		return Math.abs(serverTime - tokenTime) < SESSION_TIMEOUT;
 	}
 	
 
 	private Response GenToken(String email) throws JsonProcessingException {
 		Token token = new Token(nextSessionId(), System.currentTimeMillis());
-		usersLoggedIn.put(email, token);
+		System.out.println("gen token email " + email);
+		Application.usersLoggedIn.put(email, token);
 		ObjectMapper mapper = new ObjectMapper();
 		String tokenJson = null;
 		tokenJson = mapper.writeValueAsString(token);
