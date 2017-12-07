@@ -2,6 +2,7 @@ package server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.sql.SQLException;
 import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -32,26 +33,29 @@ public class Application {
         	System.out.println(e);
         }
     	
-//    	DatabaseLoader dbloader = new DatabaseLoader();
-//    	
-//    	try {
-//			dbloader.connectDB();
-//			dbloader.insertUser("carlos", "carlos@gmail.com", "password");
-//			dbloader.login("carlos@gmail.com", "' OR 1=1 /* ");
-//			dbloader.sellProduct(1004, 1, 100);
-//			dbloader.sellProduct(1004, 1, 50);
-//			dbloader.sellProduct(1004, 1, 50);
-//			dbloader.sellProduct(1004, 1, 200);
-//			dbloader.commentProduct(1004, 1, "Este produto é uma merda");
-//			dbloader.commentProduct(1004, 1, "<script>alert('XSS');</script>");
-//			dbloader.buyProduct(1004, 1);
-//			dbloader.closeConn();
-//		} catch (ClassNotFoundException | SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+    	DatabaseLoader dbloader = new DatabaseLoader();
+    	
+    	try {
+			dbloader.connectDB();
+			dbloader.insertUser("carlos", "carlos@gmail.com", "password");
+			dbloader.login("carlos@gmail.com", "' OR 1=1 /* ");
+			dbloader.sellProduct(1004, 1, 100);
+			dbloader.sellProduct(1004, 1, 50);
+			dbloader.sellProduct(1004, 1, 50);
+			dbloader.sellProduct(1004, 1, 200);
+			dbloader.commentProduct(1004, 1, "Este produto é uma merda");
+			dbloader.commentProduct(1004, 1, "<script>alert('XSS');</script>");
+			dbloader.buyProduct(1004, 1);
+			dbloader.closeConn();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	    
-    	SpringApplication.run(Application.class, args); 	
+//    	SpringApplication.run(Application.class, args); 	
 		
     }
     
