@@ -20,6 +20,8 @@
 
 #  Run Options:
 #
+#  1- Run the Servers.
+#
 #  To run the primary server
 #  Open a terminal
 #  Navigate to the folder AuctionHouse/Server/initial
@@ -35,3 +37,20 @@
 # $ mvn clean install
 # $ mvn compile
 # $ mvn spring-boot:run
+#
+#
+#  2- Lauch website
+#  
+#  First, you have to add the certificate to your browser
+# this depends on your browser, but it should be on the 
+# settings-> Privacy and security -> Manage Certificates
+# -> Import certificate. Here you'll have to browse in the
+# directory AuctionHouse/Server/initial and select the file
+# keystore.p12
+# 
+#  In the browser navigation bar type:
+#  - https://localhost:8443
+#  
+#  This should redirect you to the website home page
+#
+

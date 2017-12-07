@@ -98,9 +98,3 @@ INSERT INTO Product(id, name) VALUES (2, "Computer");
 INSERT INTO Product(id, name) VALUES (3, "Smartphone");
 INSERT INTO Product(id, name) VALUES (4, "Headphones");
 INSERT INTO Product(id, name) VALUES (5, "Mouse");
-
-
-INSERT INTO User (id, name, email, password) VALUES (1000, "Diogo Castro", "diogo_castro@gmail.com", "doisazul");
-INSERT INTO User (name, email, password) VALUES ("Joana Oliveira", "joana_oliveira@gmail.com", "brinquedo");
-INSERT INTO User (name, email, password) VALUES ("Carlos Vilas", "carlos_vilas@gmail.com", "domingo");
-INSERT INTO User (name, email, password) VALUES ("Ana Maria", "ana_maria@gmail.com", "carro");
