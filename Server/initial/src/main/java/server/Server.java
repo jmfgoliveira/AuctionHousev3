@@ -259,9 +259,10 @@ public class Server {
     @RequestMapping(value={"/get_prices"}, method=RequestMethod.POST)
     public Response getPrices() throws ParseException, IOException {
     	System.out.println("Get_prices");
+    	int[] prices = null;
     	try {
 			dbloader.connectDB();
-			String[] prices = dbloader.getPrices();
+			prices = dbloader.getPrices();
 			for(int i=0; i<5; i++) {
 				System.out.println("Price: " + prices[i]);
 			}
@@ -277,8 +278,7 @@ public class Server {
 				return Response.status(ERROR).build();
 			}
 		}
-    	return Response.status(ERROR).build();
-    	
+    	return Response.ok(prices, MediaType.APPLICATION_JSON).build();	
     }
     
     public String extractRandNum(String token) {

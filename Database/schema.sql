@@ -57,7 +57,7 @@ CREATE TABLE Auction (
 	id						integer(5) NOT NULL AUTO_INCREMENT,
 	seller_id				integer(5) NOT NULL,
 	product_id				integer(5) NOT NULL,	
-	price					int(5) NOT NULL,
+	price					integer(5) NOT NULL,
 	end_date				varchar (10) NOT NULL,
 	state					varchar(10),
  
@@ -73,7 +73,7 @@ CREATE TABLE Purchases (
 	seller_id				integer(5) NOT NULL,
 	buyer_id				integer(5) NOT NULL,
 	product_id				integer(5) NOT NULL,	
-	price					int(5) NOT NULL,
+	price					integer(5) NOT NULL,
 	date					varchar (10) NOT NULL,
 	state					varchar(15),
  
