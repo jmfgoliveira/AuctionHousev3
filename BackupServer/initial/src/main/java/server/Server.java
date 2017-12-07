@@ -33,6 +33,8 @@ public class Server {
     private final AtomicLong counter = new AtomicLong();
 	private static final int SESSION_TIMEOUT = 30 * 60 * 1000;
 	private static SecureRandom random = new SecureRandom();
+	
+	private static ConcurrentHashMap<String, Token> usersLoggedIn = new ConcurrentHashMap<String, Token>();
 
 	private static final int ERROR = 1;
 
@@ -331,8 +333,8 @@ public class Server {
     
     private boolean ValidateToken(String randNum, String ts, String email) {
     	
-    	if(Application.usersLoggedIn.containsKey(email)) {
-    		Token token = Application.usersLoggedIn.get(email);
+    	if(usersLoggedIn.containsKey(email)) {
+    		Token token = usersLoggedIn.get(email);
     		long tsLong = Long.parseLong(ts);
     		if(token.getRandomNum().equals(randNum) && checkTokenTimeStamp(tsLong)) {
     			return true;
@@ -353,7 +355,7 @@ public class Server {
 
 	private Response GenToken(String email) throws JsonProcessingException {
 		Token token = new Token(nextSessionId(), System.currentTimeMillis());
-		Application.usersLoggedIn.put(email, token);
+		usersLoggedIn.put(email, token);
 		ObjectMapper mapper = new ObjectMapper();
 		String tokenJson = null;
 		tokenJson = mapper.writeValueAsString(token);

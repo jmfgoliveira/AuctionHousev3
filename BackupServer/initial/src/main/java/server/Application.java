@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.sql.SQLException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.boot.SpringApplication;
@@ -17,6 +18,10 @@ public class Application {
 	
 	public static void main(String[] args) {
     		
+		
+		ConcurrentHashMap<String, Token> usersLoggedIn = new ConcurrentHashMap<String, Token>();
+		
+		
     	Socket clientsocket = null;
     	PrintStream output = null;
     	
