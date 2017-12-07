@@ -1,0 +1,4 @@
+# porto do springboot
+
+sudo iptables -A INPUT --dport 8443 -j ACCEPT
+sudo iptables -A INPUT -j DROP

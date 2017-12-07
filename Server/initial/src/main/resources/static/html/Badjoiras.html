@@ -23,7 +23,7 @@
         checkEmpty(name);
         checkEmpty(price);
  
-        var url = "https://localhost:8443/new_product";
+        var url = "https://localhost:8443/sell_product";
         var xmlhttp = new XMLHttpRequest();
         var time = (new Date()).getTime();
  
@@ -67,7 +67,7 @@
       function checkEmpty(string) {
         if(string.length == 0){
           window.alert("Empty field!");
-          window.location("https://localhost:8080/register.html");
+          window.location("https://localhost:8443/html/new_product.html");
         }
       }
   </script>

@@ -135,10 +135,10 @@ public class Server {
 		}
     }
     
-    @RequestMapping(value={"/new_auction"}, method=RequestMethod.POST)
-    public Response product(@RequestBody String param) throws ParseException, IOException {
+    @RequestMapping(value={"/sell_product"}, method=RequestMethod.POST)
+    public Response sellProduct(@RequestBody String param) throws ParseException, IOException {
   	    
-    	System.out.println("NEW PRODUCT");
+    	System.out.println("SELL PRODUCT");
     	String email = "";
     	String token = "";
     	String price = "";
@@ -172,16 +172,14 @@ public class Server {
     	else {
     		return Response.status(ERROR).build();
     	}
-    	
-    	System.out.println("VALIDTOKEN: " + ValidateToken(randNum, ts, email));
-    	
+    	    	
     	if(ValidateToken(randNum, ts, email)) {
     	
 	    	boolean insert = false;
 	    		    	
 			try {
-				dbloader.connectDB();	
-			//	insert = dbloader.insertProduct(int owner_id, name, intPrice, intQuantity);
+				dbloader.connectDB();
+				insert = dbloader.sellProduct(email, name, intPrice);
 			} catch (ClassNotFoundException | SQLException e) 
 			{
 				return Response.status(ERROR).build();
@@ -202,6 +200,85 @@ public class Server {
 			}
     	}
     	return Response.status(ERROR).build();
+    }
+    
+    @RequestMapping(value={"/buy_product"}, method=RequestMethod.POST)
+    public Response buyProduct(@RequestBody String param) throws ParseException, IOException {
+  	    
+    	System.out.println("BUY PRODUCT");
+    	String email = "";
+    	String token = "";
+    	String productName = "";
+    	JSONParser parser = new JSONParser();
+    	JSONObject json;
+		try {
+			json = (JSONObject) parser.parse(param);
+			
+			email = StringEscapeUtils.escapeHtml((String) json.get("email"));
+			token = StringEscapeUtils.escapeHtml((String) json.get("token"));
+			productName = StringEscapeUtils.escapeHtml((String) json.get("productId"));
+    	
+		}catch(Exception e) { }
+		
+		String randNum = extractRandNum(token);
+		String ts = extractTimestamp(token);
+		
+		System.out.println("email: " + email);
+		System.out.println("token: " + token);
+		System.out.println("price: " + productName);
+		  	    	
+    	if(ValidateToken(randNum, ts, email)) {
+    	
+	    	boolean insert = false;
+	    		    	
+			try {
+				dbloader.connectDB();
+				insert = dbloader.buyProduct(email, productName);
+			} catch (ClassNotFoundException | SQLException e) 
+			{
+				return Response.status(ERROR).build();
+			}
+			finally 
+			{
+				try {
+					dbloader.closeConn();
+				} catch (SQLException e) {
+					return Response.status(ERROR).build();
+				}
+			}
+			
+	    	if(insert){
+	    		return GenToken(email);
+			}else{
+				return Response.status(ERROR).build();
+			}
+    	}
+    	return Response.status(ERROR).build();
+    }
+    
+    @RequestMapping(value={"/get_prices"}, method=RequestMethod.POST)
+    public Response getPrices() throws ParseException, IOException {
+    	System.out.println("Get_prices");
+    	try {
+			dbloader.connectDB();
+			String[] prices = dbloader.getPrices();
+			for(int i=0; i<5; i++) {
+				System.out.println("Price: " + prices[i]);
+			}
+		} catch (ClassNotFoundException | SQLException e) 
+		{
+			return Response.status(ERROR).build();
+		}
+		finally 
+		{
+			try {
+				dbloader.closeConn();
+			} catch (SQLException e) {
+				return Response.status(ERROR).build();
+			}
+		}
+    	return Response.status(ERROR).build();
+    	
     }
     
     public String extractRandNum(String token) {

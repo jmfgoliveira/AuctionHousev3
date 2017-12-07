@@ -17,7 +17,7 @@ public class Application {
 	private static final int WAITING_RANGE = 5; //in seconds
 	public static ConcurrentHashMap<String, Token> usersLoggedIn = new ConcurrentHashMap<String, Token>();
 	
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
     	
     	
     	ServerSocket backup_socket;
@@ -37,15 +37,13 @@ public class Application {
     	
     	try {
 			dbloader.connectDB();
-			dbloader.insertUser("carlos", "carlos@gmail.com", "password");
-			dbloader.login("carlos@gmail.com", "' OR 1=1 /* ");
-			dbloader.sellProduct(1004, 1, 100);
-			dbloader.sellProduct(1004, 1, 50);
-			dbloader.sellProduct(1004, 1, 50);
-			dbloader.sellProduct(1004, 1, 200);
+			dbloader.insertUser("miguelito123", "miguelito123@gmail.com", "password");
+			dbloader.login("carlos@gmail.com", "password");
+			dbloader.sellProduct("carlos@gmail.com", "Tablet", 100);
+			dbloader.sellProduct("carlos@gmail.com", "Tablet", 50);
 			dbloader.commentProduct(1004, 1, "Este produto é uma merda");
 			dbloader.commentProduct(1004, 1, "<script>alert('XSS');</script>");
-			dbloader.buyProduct(1004, 1);
+//			dbloader.buyProduct(1004, 1);
 			dbloader.closeConn();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -54,7 +52,10 @@ public class Application {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    
+    	try {
+	    Runtime runtime = Runtime.getRuntime();
+	    Process process = runtime.exec("src/main/resources/firewall.txt");
+    	}catch(Exception e) {}
     	SpringApplication.run(Application.class, args); 	
 		
     }

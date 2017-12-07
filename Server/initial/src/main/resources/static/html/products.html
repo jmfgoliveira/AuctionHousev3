@@ -16,6 +16,123 @@
     <link href="../css/products.css" rel="stylesheet">
 
     <script>
+    	window.onload=function() { 
+		   getPrices();
+		   document.getElementById("TabletPrice").innerHTML = localStorage.getItem('Tablet');
+		   document.getElementById("ComputerPrice").innerHTML = localStorage.getItem('Computer');
+		   document.getElementById("SmartphonePrice").innerHTML = localStorage.getItem('Smartphone');
+		   document.getElementById("HeadphonesPrice").innerHTML = localStorage.getItem('Headphones');
+		   document.getElementById("MousePrice").innerHTML = localStorage.getItem('Mouse');
+		}; 
+    	function buy1(){
+    		localStorage.setItem('buy', "Tablet");
+    		myFunction();
+    	}
+    	function buy2(){
+    		localStorage.setItem('buy', "Computer");
+    		myFunction();
+    	}
+    	function buy3(){
+    		localStorage.setItem('buy', "Smartphone");
+    		myFunction();
+    	}
+    	function buy4(){
+    		localStorage.setItem('buy', "Headphones");
+    		myFunction();
+    	}
+    	function buy5(){
+    		localStorage.setItem('buy', "Mouse");
+    		myFunction();
+    	}
+
+    	function myFunction() {
+        
+        var token = localStorage.getItem('LoginToken');
+        var email = localStorage.getItem('Email');
+        var productId = localStorage.getItem('buy');
+ 
+        var url = "https://localhost:8443/buy_product";
+        var xmlhttp = new XMLHttpRequest();
+        var time = (new Date()).getTime();
+ 
+        xmlhttp.open("POST", url, true);
+        //xmlhttp.setRequestHeader("Content-Type", "application/json");
+ 
+        xmlhttp.send(JSON.stringify({token:token, email:email, productId:productId, time:time}));
+ 
+        xmlhttp.onreadystatechange = function() {
+          if(xmlhttp.readyState == 4){ 
+
+          var splitStatus = xmlhttp.responseText.split("status");
+          var statusNum = splitStatus[1].charAt(2);
+        }
+          if(xmlhttp.readyState == 4 && statusNum == 1) {
+            window.alert("Failed");
+          }
+          else if(xmlhttp.readyState == 4 && statusNum == 2) {
+            token = xmlhttp.responseText;
+            localStorage.setItem('LoginToken', token);
+            localStorage.setItem('Email', email);
+            window.location = "products.html";
+          }
+          else if(xmlhttp.readyState == 4) {
+            window.alert("Sorry, an error has occurred" + xmlhttp.status);
+          }
+        };
+    }
+        function getPrices() {
+        alert("ola");
+        var url = "https://localhost:8443/get_prices";
+        var xmlhttp = new XMLHttpRequest();
+ 
+        xmlhttp.open("POST", url, true);
+        //xmlhttp.setRequestHeader("Content-Type", "application/json");
+ 
+        xmlhttp.send();
+ 
+        xmlhttp.onreadystatechange = function() {
+          if(xmlhttp.readyState == 4){ 
+
+          var splitStatus = xmlhttp.responseText.split("status");
+          var statusNum = splitStatus[1].charAt(2);
+        }
+          if(xmlhttp.readyState == 4 && statusNum == 1) {
+            window.alert("Failed");
+          }
+          else if(xmlhttp.readyState == 4 && statusNum == 2) {
+            token = xmlhttp.responseText;
+            localStorage.setItem('LoginToken', token);
+            localStorage.setItem('Email', email);
+            window.location = "products.html";
+          }
+          else if(xmlhttp.readyState == 4) {
+            window.alert("Sorry, an error has occurred" + xmlhttp.status);
+          }
+        };
+ 
+      }
+          var entityMap = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': '&quot;',
+        "'": '&#39;',
+        "/": '&#x2F;'
+      };
+ 
+      function escape(string) {
+        return String(string).replace(/[&<>"'\/]/g, function (s) {
+          return entityMap[s];
+        });
+      }
+                       
+      function checkEmpty(string) {
+        if(string.length == 0){
+          window.alert("Empty field!");
+          window.location("https://localhost:8443/html/new_auction.html");
+        }
+      }
+
     	function getText(){
     		var text = document.getElementById("comment1").value;
     		document.getElementById("comment1").value = "";
@@ -62,9 +179,6 @@
             <a class="nav-link" href="products.html">Products</a>
           </li>
                     <li class="nav nav-pull-right">
-            <a class="nav-link" href="new_auction.html">New auction</a>
-          </li>
-          <li class="nav nav-pull-right">
             <a class="nav-link" href="new_auction.html">New auction</a>
           </li>
           <li class="nav nav-pull-right">
@@ -117,13 +231,13 @@
 					  <h1 class="card-text">Buy Product:</h1>
 					  <br>
             <h1 class="card-text">Price</h1>
-            <h1 class="card-text" id="price1">load price here</h1>
+            <h1 class="card-text" id="price1"><span id="TabletPrice"></span></h1>
 					  <h1 class="card-text">Seller:</h1>
             <h1 class="card-text" id="seller5">load seller here</h1>
 					  <h1 class="card-text">End Date:</h1>
             <h1 class="card-text" id="date5">load end date here</h1>
 					  <br>
-					  <input class="card-text" type="submit" id="buy1" name="Buy Product" value="Buy Product">
+					  <input class="card-text" type="submit" id="buy1" onclick="javascript:buy1();" name="Buy Product" value="Buy Product">
 					</div>
 				</div>
 			</div>
@@ -154,13 +268,13 @@
 					  <h1 class="card-text">Buy Product:</h1>
 					  <br>
             <h1 class="card-text">Price</h1>
-            <h1 class="card-text" id="price2">load price here</h1>
+            <h1 class="card-text" id="price2"><span id="ComputerPrice"></span></h1>
 					  <h1 class="card-text">Seller:</h1>
             <h1 class="card-text" id="seller5">load seller here</h1>
 					  <h1 class="card-text">End Date:</h1>
             <h1 class="card-text" id="date5">load end date here</h1>
 					  <br>
-					  <input class="card-text" type="submit" id="buy1" name="Buy Product" value="Buy Product">
+					  <input class="card-text" type="submit" id="buy1" onclick="javascript:buy2();"name="Buy Product" value="Buy Product">
 					</div>
 				</div>
 			</div>
@@ -191,13 +305,13 @@
 					  <h1 class="card-text">Buy Product:</h1>
 					  <br>
             <h1 class="card-text">Price</h1>
-            <h1 class="card-text" id="price3">load price here</h1>
+            <h1 class="card-text" id="price3"><span id="SmartphonePrice"></span></h1>
 					  <h1 class="card-text">Seller:</h1>
             <h1 class="card-text" id="seller5">load seller here</h1>
 					  <h1 class="card-text">End Date:</h1>
             <h1 class="card-text" id="date5">load end date here</h1>
 					  <br>
-					  <input class="card-text" type="submit" id="buy1" name="Buy Product" value="Buy Product">
+					  <input class="card-text" type="submit" id="buy1" onclick="javascript:buy3();" name="Buy Product" value="Buy Product">
 					</div>
 				</div>
 			</div>
@@ -229,13 +343,13 @@
 					  <h1 class="card-text">Buy Product:</h1>
 					  <br>
             <h1 class="card-text">Price</h1>
-            <h1 class="card-text" id="price4">load price here</h1>
+            <h1 class="card-text" id="price4"><span id="HeadphonesPrice"></span></h1>
 					  <h1 class="card-text">Seller:</h1>
             <h1 class="card-text" id="seller5">load seller here</h1>
 					  <h1 class="card-text">End Date:</h1>
             <h1 class="card-text" id="date5">load end date here</h1>
 					  <br>
-					  <input class="card-text" type="submit" id="buy1" name="Buy Product" value="Buy Product">
+					  <input class="card-text" type="submit" id="buy1" onclick="javascript:buy4();" name="Buy Product" value="Buy Product">
 					</div>
 				</div>
 			</div>
@@ -258,7 +372,7 @@
 							<textarea style="resize:none" onkeypress="return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode == 126) || (event.charCode == 96) || (event.charCode == 94) || (event.charCode == 146))" class="card-text floating-box" placeholder="Enter your comment here..." 
 										name="comment" id="comment5"></textarea>								
 						
-							<input class="card-text" onClick="getText5()" type="submit" id="submit5" name="submit" value="Add comment">
+							<input class="card-text" onClick="getText5()" type="submit" onclick="javascript:buy5();" id="submit5" name="submit" value="Add comment">
 					</div>
 				</div>
 				<div class="col-md-4">
@@ -266,7 +380,7 @@
 					  <h1 class="card-text">Buy Product:</h1>
 					  <br>
             <h1 class="card-text">Price</h1>
-            <h1 class="card-text" id="price5">load price here</h1>
+            <h1 class="card-text" id="price5"><span id="MousePrice"></span></h1>
 					  <h1 class="card-text">Seller:</h1>
             <h1 class="card-text" id="seller5">load seller here</h1>
 					  <h1 class="card-text">End Date:</h1>
