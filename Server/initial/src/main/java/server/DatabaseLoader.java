@@ -289,6 +289,7 @@ public class DatabaseLoader {
 		
 		//ver se o user está logged in
 		
+		
 		Date date = new Date();
 		String str = new SimpleDateFormat("dd-MM-yyyy").format(date);
 		
@@ -362,8 +363,19 @@ public class DatabaseLoader {
 		}
 	}
 	
-	public void sellProduct(int id_seller, int product_id, int price) throws SQLException
+	public boolean sellProduct(String email, String product_name, int price) throws SQLException
 	{
+	
+		if(!productExists(product_name)){
+			return false;
+		}
+		
+		if(!checkUserExists(email)){
+			return false;
+		}
+		
+		int id_seller= getSellerId(email);
+		int product_id=getProductId(product_name);
 		
 		String sql = "INSERT INTO Auction(seller_id, product_id, price, end_date, state)" +
 				 "VALUES (?,?,?,?,?)";
@@ -387,11 +399,61 @@ public class DatabaseLoader {
 	    { 
 	    	stmt.close(); 
 	    }
-		
+		  
 		System.out.println("Auction Created");
+		return false;
 		
 	}
 	
+	private boolean productExists(String product_name) throws SQLException {
+		
+		String sql = "SELECT id FROM Product WHERE name=?";
+		PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
+		
+		stmt.setString(1, product_name);
+		
+		ResultSet rs = stmt.executeQuery();
+		
+		return rs.next();
+	}
+
+	private int getProductId(String product_name) throws SQLException {
+	
+		int id = 1;
+		
+		String sql = "SELECT id FROM Product WHERE name=?";
+		PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
+		
+		stmt.setString(1, product_name);
+		
+		ResultSet rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			id = rs.getInt("id");
+		}
+		
+		return id;
+	}
+
+	private int getSellerId(String email) throws SQLException {
+		
+		int seller_id=0;
+		
+		String emailhash = DigestUtils.sha256Hex(email);
+		
+		String sql = "select email from User where email=?";
+		PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
+		stmt.setString(1, emailhash);
+		
+		ResultSet rs = stmt.executeQuery();
+		
+		if(rs.next()){
+			seller_id=rs.getInt("id");
+		}
+		
+		return seller_id;
+	}
+
 	public void closeConn() throws SQLException 
 	{
 		
