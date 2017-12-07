@@ -261,7 +261,7 @@ public class Server {
     	System.out.println("Get_prices");
     	try {
 			dbloader.connectDB();
-			String[] prices = dbloader.getPrices();
+			int[] prices = dbloader.getPrices();
 			for(int i=0; i<5; i++) {
 				System.out.println("Price: " + prices[i]);
 			}

@@ -421,62 +421,21 @@ public class DatabaseLoader {
 	
 	public int[] getPrices() throws SQLException {
 		int[] price = null;
+		
 		int priceid = 0;
 		
-		String sql = "select price from Auction where product_id=? order by price asc";
-		PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
-		stmt.setInt(1, 1);
-		ResultSet rs = stmt.executeQuery();
-		
-		if(rs.next()){
-			priceid=rs.getInt("price");
+		for(int i =0; i<4; i++){
+			String sql = "select price from Auction where product_id=? order by price asc";
+			PreparedStatement stmt = (PreparedStatement) connection.prepareStatement(sql);
+			stmt.setInt(1, i++);
+			ResultSet rs = stmt.executeQuery();
+			
+			if(rs.next()){
+				priceid=rs.getInt("price");
+			}
+			
+			price[i]=priceid;
 		}
-		
-		price[0]=priceid;
-		
-		sql = "select price from Auction where product_id=? order by price asc";
-		stmt = (PreparedStatement) connection.prepareStatement(sql);
-		stmt.setInt(1, 2);
-		rs = stmt.executeQuery();
-		
-		if(rs.next()){
-			priceid=rs.getInt("price");
-		}
-		
-		price[1]=priceid;
-		
-		sql = "select price from Auction where product_id=? order by price asc";
-		stmt = (PreparedStatement) connection.prepareStatement(sql);
-		stmt.setInt(1, 3);
-		rs = stmt.executeQuery();
-		
-		if(rs.next()){
-			priceid=rs.getInt("price");
-		}
-		
-		price[2]=priceid;
-		
-		sql = "select price from Auction where product_id=? order by price asc";
-		stmt = (PreparedStatement) connection.prepareStatement(sql);
-		stmt.setInt(1, 4);
-		rs = stmt.executeQuery();
-		
-		if(rs.next()){
-			priceid=rs.getInt("price");
-		}
-		
-		price[3]=priceid;
-		
-		sql = "select price from Auction where product_id=? order by price asc";
-		stmt = (PreparedStatement) connection.prepareStatement(sql);
-		stmt.setInt(1, 5);
-		rs = stmt.executeQuery();
-		
-		if(rs.next()){
-			priceid=rs.getInt("price");
-		}
-		
-		price[4]=priceid;
 		
 		return price;
 	}
