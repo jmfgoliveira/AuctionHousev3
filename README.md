@@ -39,7 +39,7 @@
 # $ mvn spring-boot:run
 #
 #
-#  2- Lauch website
+#  2- Launch website
 #  
 #  First, you have to add the certificate to your browser
 # this depends on your browser, but it should be on the 
